@@ -137,6 +137,20 @@ SIM_SIGNATURE_ENABLED=false \
 npm run sim
 ```
 
+Эмулятор теперь stateful и реализует логику клиента:
+- применяет `config` из poll response (`activeProfile`, `profiles`, `schedule`);
+- исполняет все команды: `FEED_NOW`, `SET_PROFILE`, `SET_SCHEDULE`, `SET_DEFAULT_PORTION`, `REBOOT`, `PING`;
+- отправляет `ack[]` по обработанным командам;
+- ведет heartbeat/status/log как устройство (uptime/rssi/lastFeedTs/BOOT/AUTO_FEED/MANUAL_FEED и т.д.).
+
+Доп. переменные (опционально):
+
+```bash
+SIM_FIRMWARE=1.0.3-sim
+SIM_RSSI_BASE=-55
+SIM_VERBOSE=true
+```
+
 Через docker compose профиль:
 
 ```bash
