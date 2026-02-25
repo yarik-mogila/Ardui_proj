@@ -147,11 +147,11 @@
   }
 
   const ICONS = {
-    dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>',
-    device: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M9 7h6"/><path d="M12 17h.01"/></svg>',
-    security: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 7v5c0 5.2 3.4 8.8 8 10 4.6-1.2 8-4.8 8-10V7z"/><path d="m9.5 12.5 2 2 4-4"/></svg>',
-    logout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17v-2a4 4 0 0 1 4-4h7"/><path d="M21 11 17 7"/><path d="m21 11-4 4"/><path d="M14 21H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h8"/></svg>',
-    paw: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="4" cy="8" r="2"/><path d="M12 19c-4 0-6-2.5-6-5 0-1.8 1.3-3 3-3h6c1.7 0 3 1.2 3 3 0 2.5-2 5-6 5z"/></svg>'
+    dashboard: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>',
+    device: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M9 7h6"/><path d="M12 17h.01"/></svg>',
+    security: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 7v5c0 5.2 3.4 8.8 8 10 4.6-1.2 8-4.8 8-10V7z"/><path d="m9.5 12.5 2 2 4-4"/></svg>',
+    logout: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17v-2a4 4 0 0 1 4-4h7"/><path d="M21 11 17 7"/><path d="m21 11-4 4"/><path d="M14 21H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h8"/></svg>',
+    paw: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="4" cy="8" r="2"/><path d="M12 19c-4 0-6-2.5-6-5 0-1.8 1.3-3 3-3h6c1.7 0 3 1.2 3 3 0 2.5-2 5-6 5z"/></svg>'
   };
 
   function renderSidebar(opts) {
@@ -184,7 +184,7 @@
     return `
       <header class="topbar">
         <button class="topbar-toggle" onclick="sfApi.toggleSidebar()" aria-label="Toggle menu">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg>
         </button>
         <div class="topbar-title-wrap">
           <strong class="topbar-title">Smart Feeder Cloud</strong>
