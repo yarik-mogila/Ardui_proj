@@ -166,7 +166,7 @@
         const active = activePage === 'device' && currentDeviceId === d.deviceId;
         const stateClass = isOnline(d.lastSeenAt) ? 'dot-online' : 'dot-offline';
         return `
-          <a href="/device.html?id=${encodeURIComponent(d.deviceId)}" class="${active ? 'active' : ''}" onclick="sfApi.closeSidebar()">
+          <a href="device.html?id=${encodeURIComponent(d.deviceId)}" class="${active ? 'active' : ''}" onclick="sfApi.closeSidebar()">
             <span class="sidebar-icon">${ICONS.device}</span>
             <span class="sidebar-line">
               <span>${d.name}</span>
@@ -178,7 +178,7 @@
       .join('');
 
     const securityLink = currentDeviceId
-      ? `<a href="/security.html?id=${encodeURIComponent(currentDeviceId)}" class="${activePage === 'security' ? 'active' : ''}" onclick="sfApi.closeSidebar()"><span class="sidebar-icon">${ICONS.security}</span><span class="sidebar-line"><span>Security</span><small>Secret and auth mode</small></span></a>`
+      ? `<a href="security.html?id=${encodeURIComponent(currentDeviceId)}" class="${activePage === 'security' ? 'active' : ''}" onclick="sfApi.closeSidebar()"><span class="sidebar-icon">${ICONS.security}</span><span class="sidebar-line"><span>Security</span><small>Secret and auth mode</small></span></a>`
       : '';
 
     return `
@@ -193,7 +193,7 @@
       </header>
       <div class="sidebar-overlay" onclick="sfApi.closeSidebar()"></div>
       <aside class="sidebar">
-        <a class="sidebar-brand" href="/index.html">
+        <a class="sidebar-brand" href="index.html">
           <span class="brand-mark">${ICONS.paw}</span>
           <span class="brand-copy">
             <strong>Smart Feeder</strong>
@@ -202,7 +202,7 @@
         </a>
         <div class="sidebar-user">${userEmail}</div>
         <nav class="sidebar-nav">
-          <a href="/index.html" class="${activePage === 'dashboard' ? 'active' : ''}" onclick="sfApi.closeSidebar()">
+          <a href="index.html" class="${activePage === 'dashboard' ? 'active' : ''}" onclick="sfApi.closeSidebar()">
             <span class="sidebar-icon">${ICONS.dashboard}</span>
             <span class="sidebar-line"><span>Dashboard</span><small>Overview</small></span>
           </a>
@@ -210,7 +210,7 @@
           ${securityLink}
         </nav>
         <div class="sidebar-footer">
-          <button class="sidebar-logout" onclick="sfApi.logout().finally(function(){location.href='/index.html';})">
+          <button class="sidebar-logout" onclick="sfApi.logout().finally(function(){location.href='index.html';})">
             <span class="sidebar-icon">${ICONS.logout}</span>
             <span class="sidebar-line"><span>Logout</span><small>End session</small></span>
           </button>
