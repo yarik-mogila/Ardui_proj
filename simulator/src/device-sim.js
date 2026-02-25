@@ -23,8 +23,8 @@ const cfg = {
   deviceId: process.env.SIM_DEVICE_ID || 'feeder-001',
   deviceSecret: process.env.SIM_DEVICE_SECRET || '',
   signatureEnabled: envBool('SIM_SIGNATURE_ENABLED', false),
-  intervalSec: Math.max(1, envInt('SIM_INTERVAL_SEC', 60)),
-  firmware: process.env.SIM_FIRMWARE || '1.0.3-sim',
+  intervalSec: Math.max(1, envInt('SIM_INTERVAL_SEC', 10)),
+  firmware: process.env.SIM_FIRMWARE || '1.0.0',
   rssiBase: envInt('SIM_RSSI_BASE', -55),
   verbose: envBool('SIM_VERBOSE', true)
 };
@@ -405,6 +405,6 @@ async function loop() {
   }
 }
 
-queueLog('BOOT', 'Симулятор устройства запущен', { firmware: cfg.firmware });
+queueLog('BOOT', 'Device started', { firmware: cfg.firmware });
 console.log('[sim] started with config', cfg);
 loop();
