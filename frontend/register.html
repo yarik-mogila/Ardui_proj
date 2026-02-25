@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Smart Feeder Cloud - Register</title>
-  <link rel="stylesheet" href="./assets/styles.css?v=20260226-pure" />
+  <title>Smart Feeder Cloud - Регистрация</title>
+  <link rel="stylesheet" href="./assets/styles.css?v=20260226-ru2" />
 </head>
 <body>
   <div class="auth-layout">
@@ -12,7 +12,7 @@
       <article class="auth-showcase">
         <div class="auth-icon-title">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="4" cy="8" r="2"/><path d="M12 19c-4 0-6-2.5-6-5 0-1.8 1.3-3 3-3h6c1.7 0 3 1.2 3 3 0 2.5-2 5-6 5z"/></svg>
-          <h1>Create account</h1>
+          <h1>Создать аккаунт</h1>
         </div>
         <p>
           Подключайте новые кормушки, управляйте расписаниями и следите за состоянием устройств
@@ -21,51 +21,51 @@
 
         <div class="auth-highlight-grid">
           <div class="auth-highlight">
-            <strong>Fast onboarding</strong>
+            <strong>Быстрый старт</strong>
             <small>Новый аккаунт и старт работы за минуту.</small>
           </div>
           <div class="auth-highlight">
-            <strong>Fleet visibility</strong>
+            <strong>Мониторинг флота</strong>
             <small>Статусы и телеметрия всех кормушек в реальном времени.</small>
           </div>
           <div class="auth-highlight">
-            <strong>Feeding control</strong>
+            <strong>Управление кормлением</strong>
             <small>Профили, расписание и ручные команды в одном месте.</small>
           </div>
           <div class="auth-highlight">
-            <strong>Security controls</strong>
-            <small>Rotate secret и централизованные настройки подписи.</small>
+            <strong>Контуры безопасности</strong>
+            <small>Смена секрета и централизованные настройки подписи.</small>
           </div>
         </div>
       </article>
 
       <div class="auth-grid">
         <section class="auth-card">
-          <h2>Register</h2>
+          <h2>Регистрация</h2>
           <form id="registerForm">
             <div class="mb-3">
-              <label class="form-label">Email</label>
+              <label class="form-label">Эл. почта</label>
               <input name="email" type="email" class="form-control" required />
             </div>
             <div class="mb-3">
-              <label class="form-label">Password</label>
+              <label class="form-label">Пароль</label>
               <input name="password" type="password" class="form-control" required minlength="8" />
             </div>
-            <button class="btn btn-brand w-100" type="submit">Create account</button>
+            <button class="btn btn-brand w-100" type="submit">Создать аккаунт</button>
           </form>
           <div class="auth-actions-row">
             <span class="muted">Уже есть аккаунт?</span>
             <a href="index.html">Войти</a>
           </div>
           <div class="hint">
-            Demo: <code>demo@smartfeeder.local</code> / <code>demo12345</code>
+            Демо: <code>demo@smartfeeder.local</code> / <code>demo12345</code>
           </div>
         </section>
       </div>
     </section>
   </div>
 
-  <script src="./assets/app.js?v=20260226-pure"></script>
+  <script src="./assets/app.js?v=20260226-ru2"></script>
   <script>
     (async function ensureGuestMode() {
       try {
@@ -83,7 +83,7 @@
       const password = fd.get('password');
       const btn = e.target.querySelector('button[type=submit]');
 
-      sfApi.showLoading(btn, 'Creating account...');
+      sfApi.showLoading(btn, 'Создание аккаунта...');
       try {
         await sfApi.register(email, password);
         try {
@@ -91,7 +91,7 @@
         } catch {
           // if register already created session, continue
         }
-        sfApi.toast('Account created', 'success');
+        sfApi.toast('Аккаунт создан', 'success');
         location.href = 'index.html';
       } catch (err) {
         sfApi.toast(err.message, 'error');

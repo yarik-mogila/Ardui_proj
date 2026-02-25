@@ -713,19 +713,24 @@ code {
 }
 
 .device-card {
-  text-decoration: none;
   color: inherit;
   background: linear-gradient(160deg, rgba(15, 39, 54, 0.86), rgba(10, 30, 42, 0.8));
   border: 1px solid rgba(132, 191, 208, 0.24);
   border-radius: 17px;
   padding: 18px;
   transition: transform var(--ease), border-color var(--ease), box-shadow var(--ease);
+  cursor: pointer;
 }
 
 .device-card:hover {
   transform: translateY(-3px);
   border-color: var(--stroke-strong);
   box-shadow: 0 20px 40px rgba(7, 15, 22, 0.55);
+}
+
+.device-card:focus-visible {
+  outline: 2px solid rgba(109, 217, 189, 0.86);
+  outline-offset: 2px;
 }
 
 .device-card-name {
@@ -770,6 +775,11 @@ code {
   margin-top: 13px;
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+}
+
+.device-card-actions .btn {
+  flex: 1 1 120px;
 }
 
 /* ----- Status chips ----- */

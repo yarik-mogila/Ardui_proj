@@ -38,23 +38,23 @@
   }
 
   function fmtTs(ts) {
-    if (!ts) return 'never';
+    if (!ts) return 'никогда';
     return new Date(ts).toLocaleString();
   }
 
   function relativeTime(ts) {
-    if (!ts) return 'never seen';
+    if (!ts) return 'связи не было';
     const diff = Date.now() - new Date(ts).getTime();
-    if (diff < 0) return 'just now';
+    if (diff < 0) return 'только что';
 
     const sec = Math.floor(diff / 1000);
-    if (sec < 60) return `${sec}s ago`;
+    if (sec < 60) return `${sec}с назад`;
     const min = Math.floor(sec / 60);
-    if (min < 60) return `${min}m ago`;
+    if (min < 60) return `${min}м назад`;
     const hour = Math.floor(min / 60);
-    if (hour < 24) return `${hour}h ago`;
+    if (hour < 24) return `${hour}ч назад`;
     const day = Math.floor(hour / 24);
-    return `${day}d ago`;
+    return `${day}д назад`;
   }
 
   function isOnline(lastSeenAt) {
@@ -65,12 +65,12 @@
   function onlineBadge(lastSeenAt) {
     const online = isOnline(lastSeenAt);
     return online
-      ? '<span class="status-badge status-online">ONLINE</span>'
-      : '<span class="status-badge status-offline">OFFLINE</span>';
+      ? '<span class="status-badge status-online">В СЕТИ</span>'
+      : '<span class="status-badge status-offline">НЕ В СЕТИ</span>';
   }
 
   function signalBars(rssi) {
-    if (rssi == null) return '<span class="muted">No signal data</span>';
+    if (rssi == null) return '<span class="muted">Нет данных сигнала</span>';
 
     let level = 0;
     if (rssi > -50) level = 4;
@@ -120,7 +120,7 @@
     if (!btn) return;
     btn.disabled = true;
     btn._original = btn.innerHTML;
-    btn.innerHTML = `<span class="spinner"></span>${text || 'Loading...'}`;
+    btn.innerHTML = `<span class="spinner"></span>${text || 'Загрузка...'}`;
   }
 
   function hideLoading(btn) {
@@ -159,7 +159,7 @@
     const activePage = opts.activePage || 'dashboard';
     const devices = opts.devices || [];
     const currentDeviceId = opts.currentDeviceId || null;
-    const userEmail = opts.userEmail || 'guest@local';
+    const userEmail = opts.userEmail || 'гость@local';
 
     const deviceItems = devices
       .map((d) => {
@@ -178,17 +178,17 @@
       .join('');
 
     const securityLink = currentDeviceId
-      ? `<a href="security.html?id=${encodeURIComponent(currentDeviceId)}" class="${activePage === 'security' ? 'active' : ''}" onclick="sfApi.closeSidebar()"><span class="sidebar-icon">${ICONS.security}</span><span class="sidebar-line"><span>Security</span><small>Secret and auth mode</small></span></a>`
+      ? `<a href="security.html?id=${encodeURIComponent(currentDeviceId)}" class="${activePage === 'security' ? 'active' : ''}" onclick="sfApi.closeSidebar()"><span class="sidebar-icon">${ICONS.security}</span><span class="sidebar-line"><span>Безопасность</span><small>Секрет и режим авторизации</small></span></a>`
       : '';
 
     return `
       <header class="topbar">
-        <button class="topbar-toggle" onclick="sfApi.toggleSidebar()" aria-label="Toggle menu">
+        <button class="topbar-toggle" onclick="sfApi.toggleSidebar()" aria-label="Открыть меню">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg>
         </button>
         <div class="topbar-title-wrap">
-          <strong class="topbar-title">Smart Feeder Cloud</strong>
-          <small>Control Layer</small>
+          <strong class="topbar-title">Облако Smart Feeder</strong>
+          <small>Панель управления</small>
         </div>
       </header>
       <div class="sidebar-overlay" onclick="sfApi.closeSidebar()"></div>
@@ -197,22 +197,22 @@
           <span class="brand-mark">${ICONS.paw}</span>
           <span class="brand-copy">
             <strong>Smart Feeder</strong>
-            <small>Fleet Console 2026</small>
+            <small>Консоль флота 2026</small>
           </span>
         </a>
         <div class="sidebar-user">${userEmail}</div>
         <nav class="sidebar-nav">
           <a href="index.html" class="${activePage === 'dashboard' ? 'active' : ''}" onclick="sfApi.closeSidebar()">
             <span class="sidebar-icon">${ICONS.dashboard}</span>
-            <span class="sidebar-line"><span>Dashboard</span><small>Overview</small></span>
+            <span class="sidebar-line"><span>Панель</span><small>Обзор</small></span>
           </a>
-          ${deviceItems ? '<div class="sidebar-section">Devices</div>' + deviceItems : ''}
+          ${deviceItems ? '<div class="sidebar-section">Устройства</div>' + deviceItems : ''}
           ${securityLink}
         </nav>
         <div class="sidebar-footer">
           <button class="sidebar-logout" onclick="sfApi.logout().finally(function(){location.href='index.html';})">
             <span class="sidebar-icon">${ICONS.logout}</span>
-            <span class="sidebar-line"><span>Logout</span><small>End session</small></span>
+            <span class="sidebar-line"><span>Выйти</span><small>Завершить сессию</small></span>
           </button>
         </div>
       </aside>`;

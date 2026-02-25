@@ -3,43 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Smart Feeder Device</title>
-  <link rel="stylesheet" href="./assets/styles.css?v=20260226-pure" />
+  <title>Smart Feeder - Устройство</title>
+  <link rel="stylesheet" href="./assets/styles.css?v=20260226-ru2" />
 </head>
 <body>
   <div class="app-layout">
     <div id="sidebarMount"></div>
     <main class="main-content page-fade">
       <nav class="breadcrumb-nav">
-        <a href="index.html">Dashboard</a>
+        <a href="index.html">Панель</a>
         <span class="sep">/</span>
-        <span id="breadcrumbName">Device</span>
+        <span id="breadcrumbName">Устройство</span>
       </nav>
 
       <section class="card mb-4 device-hero">
         <div class="device-hero-copy">
-          <h1 id="deviceTitle">Device</h1>
+          <h1 id="deviceTitle">Устройство</h1>
           <p>Оперативное управление кормушкой, профилями и журналами событий.</p>
           <div id="deviceMeta" class="device-meta-cluster"></div>
         </div>
         <div class="device-hero-actions">
-          <a id="securityPageLink" class="btn btn-ghost" href="#">Security</a>
+          <a id="securityPageLink" class="btn btn-ghost" href="#">Безопасность</a>
         </div>
         <div class="device-kpi-strip">
           <article class="device-kpi">
-            <span>Connectivity</span>
-            <strong id="deviceHealth">Offline</strong>
+            <span>Состояние связи</span>
+            <strong id="deviceHealth">Не в сети</strong>
           </article>
           <article class="device-kpi">
-            <span>Last heartbeat</span>
-            <strong id="deviceHeartbeat">never</strong>
+            <span>Последний пинг</span>
+            <strong id="deviceHeartbeat">никогда</strong>
           </article>
           <article class="device-kpi">
-            <span>Signal</span>
-            <strong id="deviceRssi">No data</strong>
+            <span>Сигнал</span>
+            <strong id="deviceRssi">Нет данных</strong>
           </article>
           <article class="device-kpi">
-            <span>Firmware</span>
+            <span>Прошивка</span>
             <strong id="deviceFw">-</strong>
           </article>
         </div>
@@ -48,23 +48,23 @@
       <div class="grid-2 mb-4">
         <section class="card">
           <div class="card-header-bar">
-            <h3>Last status payload</h3>
-            <small class="muted">Device heartbeat snapshot</small>
+            <h3>Последний статус</h3>
+            <small class="muted">Снимок heartbeat устройства</small>
           </div>
           <pre class="json-view" id="statusJson">{}</pre>
         </section>
 
         <section class="card">
           <div class="card-header-bar">
-            <h3>Quick command</h3>
-            <small class="muted">Queue manual feed instantly</small>
+            <h3>Быстрая команда</h3>
+            <small class="muted">Немедленно отправить ручную выдачу</small>
           </div>
           <form id="feedNowForm" class="row g-2 mb-2">
             <div class="col-sm-8">
-              <input type="number" name="portionMs" min="1" class="form-control" placeholder="Portion in ms (optional)" />
+              <input type="number" name="portionMs" min="1" class="form-control" placeholder="Порция в мс (необязательно)" />
             </div>
             <div class="col-sm-4">
-              <button class="btn btn-brand w-100" type="submit">Feed now</button>
+              <button class="btn btn-brand w-100" type="submit">Выдать сейчас</button>
             </div>
           </form>
           <p class="schedule-note">Если значение пустое, используется `defaultPortionMs` активного профиля.</p>
@@ -74,26 +74,26 @@
       <div class="grid-2 mb-4">
         <section class="card">
           <div class="card-header-bar">
-            <h3>Profiles</h3>
+            <h3>Профили</h3>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Active profile</label>
+            <label class="form-label">Активный профиль</label>
             <div class="input-group">
               <select id="activeProfileSelect" class="form-select"></select>
-              <button id="activeProfileSave" class="btn btn-ghost" type="button">Apply</button>
+              <button id="activeProfileSave" class="btn btn-ghost" type="button">Применить</button>
             </div>
           </div>
 
           <form id="createProfileForm" class="row g-2">
             <div class="col-sm-5">
-              <input name="name" class="form-control" placeholder="Profile name" required />
+              <input name="name" class="form-control" placeholder="Название профиля" required />
             </div>
             <div class="col-sm-4">
-              <input name="defaultPortionMs" type="number" min="1" class="form-control" placeholder="Portion (ms)" required />
+              <input name="defaultPortionMs" type="number" min="1" class="form-control" placeholder="Порция (мс)" required />
             </div>
             <div class="col-sm-3">
-              <button class="btn btn-brand w-100" type="submit">Add</button>
+              <button class="btn btn-brand w-100" type="submit">Добавить</button>
             </div>
           </form>
 
@@ -101,8 +101,8 @@
             <table class="table">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Portion</th>
+                  <th>Название</th>
+                  <th>Порция</th>
                   <th></th>
                 </tr>
               </thead>
@@ -113,33 +113,33 @@
 
         <section class="card">
           <div class="card-header-bar">
-            <h3>Schedule (active profile)</h3>
-            <small class="muted">24h format</small>
+            <h3>Расписание (активный профиль)</h3>
+            <small class="muted">Формат 24ч</small>
           </div>
 
           <div id="scheduleEditor"></div>
           <div class="mt-3 d-flex gap-2">
-            <button id="addScheduleRow" type="button" class="btn btn-ghost">+ Event</button>
-            <button id="saveSchedule" type="button" class="btn btn-brand">Save schedule</button>
+            <button id="addScheduleRow" type="button" class="btn btn-ghost">+ Событие</button>
+            <button id="saveSchedule" type="button" class="btn btn-brand">Сохранить расписание</button>
           </div>
         </section>
       </div>
 
       <section class="card">
         <div class="card-header-bar">
-          <h3>Event logs</h3>
-          <small class="muted">Up to 50 records per page</small>
+          <h3>Журнал событий</h3>
+          <small class="muted">До 50 записей на страницу</small>
         </div>
 
         <form id="logFilterForm" class="row g-2 mb-3">
           <div class="col-sm-3">
-            <input name="type" class="form-control" placeholder="Type (AUTO_FEED...)" />
+            <input name="type" class="form-control" placeholder="Тип (AUTO_FEED...)" />
           </div>
           <div class="col-sm-6">
-            <input name="q" class="form-control" placeholder="Search in message" />
+            <input name="q" class="form-control" placeholder="Поиск по сообщению" />
           </div>
           <div class="col-sm-3">
-            <button class="btn btn-ghost w-100" type="submit">Filter</button>
+            <button class="btn btn-ghost w-100" type="submit">Фильтр</button>
           </div>
         </form>
 
@@ -147,10 +147,10 @@
           <table class="table mb-0">
             <thead>
               <tr>
-                <th>Time</th>
-                <th>Type</th>
-                <th>Message</th>
-                <th>Meta</th>
+                <th>Время</th>
+                <th>Тип</th>
+                <th>Сообщение</th>
+                <th>Мета</th>
               </tr>
             </thead>
             <tbody id="logRows"></tbody>
@@ -158,18 +158,18 @@
         </div>
 
         <div class="log-pagination">
-          <button id="logsPrev" class="btn btn-sm btn-ghost" type="button">Prev</button>
-          <button id="logsNext" class="btn btn-sm btn-ghost" type="button">Next</button>
+          <button id="logsPrev" class="btn btn-sm btn-ghost" type="button">Назад</button>
+          <button id="logsNext" class="btn btn-sm btn-ghost" type="button">Вперёд</button>
         </div>
       </section>
     </main>
   </div>
 
-  <script src="./assets/app.js?v=20260226-pure"></script>
+  <script src="./assets/app.js?v=20260226-ru2"></script>
   <script>
     const deviceId = sfApi.qp('id');
     if (!deviceId) {
-      sfApi.toast('Missing device ID', 'error');
+      sfApi.toast('Не указан ID устройства', 'error');
       location.href = 'index.html';
     }
 
@@ -211,7 +211,7 @@
     function renderScheduleEditor() {
       const root = document.getElementById('scheduleEditor');
       if (!scheduleRows.length) {
-        root.innerHTML = '<p class="muted">No scheduled events yet.</p>';
+        root.innerHTML = '<p class="muted">Событий расписания пока нет.</p>';
         return;
       }
 
@@ -226,11 +226,11 @@
             <input class="form-control" data-k="mm" type="number" min="0" max="59" value="${row.mm}">
           </div>
           <div>
-            <small>Portion ms</small>
+            <small>Порция мс</small>
             <input class="form-control" data-k="portionMs" type="number" min="1" value="${row.portionMs}">
           </div>
           <div>
-            <small>Remove</small>
+            <small>Удалить</small>
             <button class="btn btn-outline-danger w-100 schedule-remove" data-del="${idx}">&times;</button>
           </div>
         </div>
@@ -267,18 +267,18 @@
           <td>${p.name}</td>
           <td>${p.defaultPortionMs} ms</td>
           <td>
-            <button class="btn btn-sm btn-ghost" data-edit="${p.id}" data-name="${p.name}" data-portion="${p.defaultPortionMs}">Edit</button>
-            <button class="btn btn-sm btn-outline-danger" data-del="${p.id}">Delete</button>
+            <button class="btn btn-sm btn-ghost" data-edit="${p.id}" data-name="${p.name}" data-portion="${p.defaultPortionMs}">Изменить</button>
+            <button class="btn btn-sm btn-outline-danger" data-del="${p.id}">Удалить</button>
           </td>
         </tr>
       `).join('');
 
       rows.querySelectorAll('button[data-del]').forEach((btn) => {
         btn.addEventListener('click', async () => {
-          if (!confirm('Delete this profile?')) return;
+          if (!confirm('Удалить этот профиль?')) return;
           try {
             await sfApi.deleteProfile(btn.dataset.del);
-            sfApi.toast('Profile deleted', 'success');
+            sfApi.toast('Профиль удален', 'success');
             await loadDevice();
           } catch (err) {
             sfApi.toast(err.message, 'error');
@@ -288,18 +288,18 @@
 
       rows.querySelectorAll('button[data-edit]').forEach((btn) => {
         btn.addEventListener('click', async () => {
-          const newName = prompt('New profile name', btn.dataset.name);
+          const newName = prompt('Новое название профиля', btn.dataset.name);
           if (!newName) return;
-          const newPortionRaw = prompt('New default portion (ms)', btn.dataset.portion);
+          const newPortionRaw = prompt('Новая порция по умолчанию (мс)', btn.dataset.portion);
           if (!newPortionRaw) return;
           const newPortion = Number(newPortionRaw);
           if (!Number.isFinite(newPortion) || newPortion <= 0) {
-            sfApi.toast('Invalid portion value', 'error');
+            sfApi.toast('Некорректное значение порции', 'error');
             return;
           }
           try {
             await sfApi.updateProfile(btn.dataset.edit, { name: newName, defaultPortionMs: newPortion });
-            sfApi.toast('Profile updated', 'success');
+            sfApi.toast('Профиль обновлен', 'success');
             await loadDevice();
           } catch (err) {
             sfApi.toast(err.message, 'error');
@@ -327,15 +327,15 @@
 
       document.getElementById('deviceMeta').innerHTML = `
         ${sfApi.onlineBadge(currentDetails.lastSeenAt)}
-        <span class="meta-pill">Last seen: ${sfApi.fmtTs(currentDetails.lastSeenAt)}</span>
-        <span class="meta-pill">Relative: ${sfApi.relativeTime(currentDetails.lastSeenAt)}</span>
-        <span class="meta-pill">Active profile: ${currentDetails.activeProfile || '—'}</span>
+        <span class="meta-pill">Последняя связь: ${sfApi.fmtTs(currentDetails.lastSeenAt)}</span>
+        <span class="meta-pill">Относительно: ${sfApi.relativeTime(currentDetails.lastSeenAt)}</span>
+        <span class="meta-pill">Активный профиль: ${currentDetails.activeProfile || '—'}</span>
       `;
 
       const lastStatus = currentDetails.status || {};
-      const rssiText = typeof lastStatus.rssi === 'number' ? `${lastStatus.rssi} dBm` : 'No data';
+      const rssiText = typeof lastStatus.rssi === 'number' ? `${lastStatus.rssi} dBm` : 'Нет данных';
 
-      document.getElementById('deviceHealth').textContent = sfApi.isOnline(currentDetails.lastSeenAt) ? 'Online' : 'Offline';
+      document.getElementById('deviceHealth').textContent = sfApi.isOnline(currentDetails.lastSeenAt) ? 'В сети' : 'Не в сети';
       document.getElementById('deviceHeartbeat').textContent = sfApi.relativeTime(currentDetails.lastSeenAt);
       document.getElementById('deviceRssi').textContent = rssiText;
       document.getElementById('deviceFw').textContent = currentDetails.firmwareVersion || lastStatus.fw || '-';
@@ -350,7 +350,7 @@
       const body = document.getElementById('logRows');
 
       if (!logs.length) {
-        body.innerHTML = '<tr><td colspan="4" class="muted">No logs found</td></tr>';
+        body.innerHTML = '<tr><td colspan="4" class="muted">Логи не найдены</td></tr>';
         return;
       }
 
@@ -368,7 +368,7 @@
       const profileName = document.getElementById('activeProfileSelect').value;
       try {
         await sfApi.setActiveProfile(deviceId, profileName);
-        sfApi.toast('Active profile updated', 'success');
+        sfApi.toast('Активный профиль обновлен', 'success');
         await loadDevice();
       } catch (err) {
         sfApi.toast(err.message, 'error');
@@ -379,11 +379,11 @@
       e.preventDefault();
       const fd = new FormData(e.target);
       const btn = e.target.querySelector('button[type=submit]');
-      sfApi.showLoading(btn, 'Adding...');
+      sfApi.showLoading(btn, 'Добавляем...');
       try {
         await sfApi.createProfile(deviceId, fd.get('name'), Number(fd.get('defaultPortionMs')));
         e.target.reset();
-        sfApi.toast('Profile created', 'success');
+        sfApi.toast('Профиль создан', 'success');
         await loadDevice();
       } catch (err) {
         sfApi.toast(err.message, 'error');
@@ -399,15 +399,15 @@
 
     document.getElementById('saveSchedule').addEventListener('click', async () => {
       if (!selectedProfileId) {
-        sfApi.toast('No profile selected', 'warning');
+        sfApi.toast('Профиль не выбран', 'warning');
         return;
       }
 
       const btn = document.getElementById('saveSchedule');
-      sfApi.showLoading(btn, 'Saving...');
+      sfApi.showLoading(btn, 'Сохраняем...');
       try {
         await sfApi.replaceSchedule(selectedProfileId, scheduleRows);
-        sfApi.toast('Schedule saved', 'success');
+        sfApi.toast('Расписание сохранено', 'success');
         await loadDevice();
       } catch (err) {
         sfApi.toast(err.message, 'error');
@@ -421,10 +421,10 @@
       const fd = new FormData(e.target);
       const portionVal = fd.get('portionMs');
       const btn = e.target.querySelector('button[type=submit]');
-      sfApi.showLoading(btn, 'Sending...');
+      sfApi.showLoading(btn, 'Отправляем...');
       try {
         await sfApi.feedNow(deviceId, portionVal ? Number(portionVal) : null);
-        sfApi.toast('FEED_NOW queued', 'success');
+        sfApi.toast('Команда FEED_NOW поставлена в очередь', 'success');
       } catch (err) {
         sfApi.toast(err.message, 'error');
       } finally {

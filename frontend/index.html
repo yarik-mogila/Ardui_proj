@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Smart Feeder Cloud</title>
-  <link rel="stylesheet" href="./assets/styles.css?v=20260226-pure" />
+  <link rel="stylesheet" href="./assets/styles.css?v=20260226-ru2" />
 </head>
 <body>
   <div id="authBox" class="auth-layout">
@@ -21,44 +21,44 @@
 
         <div class="auth-highlight-grid">
           <div class="auth-highlight">
-            <strong>Live Fleet</strong>
+            <strong>Мониторинг флота</strong>
             <small>Онлайн/оффлайн мониторинг в одном экране.</small>
           </div>
           <div class="auth-highlight">
-            <strong>Profiles & Schedule</strong>
+            <strong>Профили и расписание</strong>
             <small>Гибкое управление порциями и временными событиями.</small>
           </div>
           <div class="auth-highlight">
-            <strong>Command Queue</strong>
+            <strong>Очередь команд</strong>
             <small>Надёжная доставка команд через polling-поток.</small>
           </div>
           <div class="auth-highlight">
-            <strong>Secure by Design</strong>
-            <small>Rotate secret, signature mode и контроль доступа.</small>
+            <strong>Безопасность</strong>
+            <small>Смена секрета, режим подписи и контроль доступа.</small>
           </div>
         </div>
       </article>
 
       <div class="auth-grid">
         <section class="auth-card">
-          <h2>Login</h2>
+          <h2>Вход</h2>
           <form id="loginForm">
             <div class="mb-3">
-              <label class="form-label">Email</label>
+              <label class="form-label">Эл. почта</label>
               <input name="email" type="email" class="form-control" required />
             </div>
             <div class="mb-3">
-              <label class="form-label">Password</label>
+              <label class="form-label">Пароль</label>
               <input name="password" type="password" class="form-control" required minlength="8" />
             </div>
-            <button class="btn btn-brand w-100" type="submit">Sign in</button>
+            <button class="btn btn-brand w-100" type="submit">Войти</button>
           </form>
           <div class="auth-actions-row">
             <span class="muted">Нет аккаунта?</span>
             <a href="register.html">Создать аккаунт</a>
           </div>
           <div class="hint">
-            Demo: <code>demo@smartfeeder.local</code> / <code>demo12345</code>
+            Демо: <code>demo@smartfeeder.local</code> / <code>demo12345</code>
           </div>
         </section>
       </div>
@@ -69,28 +69,28 @@
     <div id="sidebarMount"></div>
     <main class="main-content page-fade">
       <header class="page-header">
-        <h1>Dashboard</h1>
+        <h1>Панель</h1>
         <p id="meLabel" class="dashboard-subtitle"></p>
       </header>
 
       <section class="card dashboard-hero mb-4">
         <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap">
           <div>
-            <h3>Fleet Overview</h3>
+            <h3>Обзор флота</h3>
             <p class="muted" style="margin-top:8px">Управляйте устройствами, профилями кормления и безопасностью без переключения контекста.</p>
           </div>
         </div>
         <div class="kpi-grid">
           <article class="kpi-card">
-            <span>Total devices</span>
+            <span>Всего устройств</span>
             <strong id="kpiTotal">0</strong>
           </article>
           <article class="kpi-card">
-            <span>Online now</span>
+            <span>Сейчас в сети</span>
             <strong id="kpiOnline">0</strong>
           </article>
           <article class="kpi-card">
-            <span>Offline</span>
+            <span>Не в сети</span>
             <strong id="kpiOffline">0</strong>
           </article>
         </div>
@@ -98,7 +98,7 @@
 
       <section class="card mb-4">
         <div class="card-header-bar">
-          <h3>Add device</h3>
+          <h3>Добавить устройство</h3>
           <small class="muted">Секрет показывается один раз после создания</small>
         </div>
         <form id="addDeviceForm" class="row g-2">
@@ -106,10 +106,10 @@
             <input name="deviceId" class="form-control" placeholder="feeder-002" required />
           </div>
           <div class="col-sm-5">
-            <input name="name" class="form-control" placeholder="Kitchen feeder" required />
+            <input name="name" class="form-control" placeholder="Кухонная кормушка" required />
           </div>
           <div class="col-sm-2">
-            <button type="submit" class="btn btn-brand w-100">Create</button>
+            <button type="submit" class="btn btn-brand w-100">Создать</button>
           </div>
         </form>
         <div id="secretAlert" class="mt-3"></div>
@@ -117,7 +117,7 @@
 
       <section>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px">
-          <h3>Devices</h3>
+          <h3>Устройства</h3>
           <small class="muted">Нажмите на карточку для управления устройством</small>
         </div>
         <div id="deviceGrid" class="device-grid"></div>
@@ -125,7 +125,7 @@
     </main>
   </div>
 
-  <script src="./assets/app.js?v=20260226-pure"></script>
+  <script src="./assets/app.js?v=20260226-ru2"></script>
   <script>
     const authBox = document.getElementById('authBox');
     const appBox = document.getElementById('appBox');
@@ -153,14 +153,14 @@
       if (!devices.length) {
         deviceGrid.innerHTML = `
           <div class="card" style="grid-column:1/-1;text-align:center;padding:34px 20px">
-            <h3>No devices yet</h3>
+            <h3>Устройств пока нет</h3>
             <p class="muted" style="margin-top:8px">Добавьте первую кормушку через форму выше.</p>
           </div>`;
         return;
       }
 
       deviceGrid.innerHTML = devices.map((d) => `
-        <a class="device-card" href="device.html?id=${encodeURIComponent(d.deviceId)}">
+        <article class="device-card" role="link" tabindex="0" onclick="location.href='device.html?id=${encodeURIComponent(d.deviceId)}'" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();location.href='device.html?id=${encodeURIComponent(d.deviceId)}';}">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
             <div>
               <div class="device-card-name">${d.name}</div>
@@ -170,23 +170,23 @@
           </div>
           <div class="device-card-stats">
             <div>
-              <span class="stat-label">Last Seen</span>
+              <span class="stat-label">Последняя связь</span>
               ${sfApi.relativeTime(d.lastSeenAt)}
             </div>
             <div>
-              <span class="stat-label">Signal</span>
+              <span class="stat-label">Сигнал</span>
               ${sfApi.signalBars(d.rssi)}
             </div>
             <div>
-              <span class="stat-label">Firmware</span>
+              <span class="stat-label">Прошивка</span>
               ${d.firmwareVersion || '—'}
             </div>
           </div>
           <div class="device-card-actions" onclick="event.stopPropagation()">
-            <a class="btn btn-sm btn-ghost" href="device.html?id=${encodeURIComponent(d.deviceId)}">Open</a>
-            <a class="btn btn-sm btn-ghost" href="security.html?id=${encodeURIComponent(d.deviceId)}">Security</a>
+            <a class="btn btn-sm btn-ghost" href="device.html?id=${encodeURIComponent(d.deviceId)}">Открыть</a>
+            <a class="btn btn-sm btn-ghost" href="security.html?id=${encodeURIComponent(d.deviceId)}">Безопасность</a>
           </div>
-        </a>`).join('');
+        </article>`).join('');
     }
 
     function renderKpi() {
@@ -200,7 +200,7 @@
     async function refreshAuthState() {
       try {
         currentUser = await sfApi.me();
-        meLabel.textContent = `Signed in as ${currentUser.email}`;
+        meLabel.textContent = `Вход выполнен: ${currentUser.email}`;
         authBox.classList.add('d-none');
         appBox.classList.remove('d-none');
         await loadDevices();
@@ -221,11 +221,11 @@
       e.preventDefault();
       const fd = new FormData(e.target);
       const btn = e.target.querySelector('button[type=submit]');
-      sfApi.showLoading(btn, 'Signing in...');
+      sfApi.showLoading(btn, 'Входим...');
       try {
         await sfApi.login(fd.get('email'), fd.get('password'));
         e.target.reset();
-        sfApi.toast('Logged in successfully', 'success');
+        sfApi.toast('Вход выполнен', 'success');
         await refreshAuthState();
       } catch (err) {
         sfApi.toast(err.message, 'error');
@@ -238,12 +238,12 @@
       e.preventDefault();
       const fd = new FormData(e.target);
       const btn = e.target.querySelector('button[type=submit]');
-      sfApi.showLoading(btn, 'Creating...');
+      sfApi.showLoading(btn, 'Создание...');
       try {
         const created = await sfApi.createDevice(fd.get('deviceId'), fd.get('name'));
-        secretAlert.innerHTML = `<div class="warn-box"><strong>Device secret:</strong> <code>${created.secret}</code></div>`;
+        secretAlert.innerHTML = `<div class="warn-box"><strong>Секрет устройства:</strong> <code>${created.secret}</code></div>`;
         e.target.reset();
-        sfApi.toast('Device created', 'success');
+        sfApi.toast('Устройство создано', 'success');
         await loadDevices();
       } catch (err) {
         sfApi.toast(err.message, 'error');
