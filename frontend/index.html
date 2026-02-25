@@ -45,7 +45,7 @@
               <label class="form-label">Password</label>
               <input name="password" type="password" class="form-control" required minlength="8" />
             </div>
-            <button class="btn btn-outline-secondary w-100" type="submit">Create account</button>
+            <button class="btn btn-ghost w-100" type="submit">Create account</button>
           </form>
           <div class="mt-3" style="font-size:.8rem;color:var(--ink-muted)">
             Demo: <code>demo@smartfeeder.local</code> / <code>demo12345</code>
@@ -148,8 +148,8 @@
               </div>
             </div>
             <div class="device-card-actions" onclick="event.stopPropagation()">
-              <a class="btn btn-sm btn-outline-secondary" href="/device.html?id=${encodeURIComponent(d.deviceId)}">Open</a>
-              <a class="btn btn-sm btn-outline-secondary" href="/security.html?id=${encodeURIComponent(d.deviceId)}">Security</a>
+              <a class="btn btn-sm btn-ghost" href="/device.html?id=${encodeURIComponent(d.deviceId)}">Open</a>
+              <a class="btn btn-sm btn-ghost" href="/security.html?id=${encodeURIComponent(d.deviceId)}">Security</a>
             </div>
           </a>`;
       }).join('');
@@ -196,7 +196,7 @@
       sfApi.showLoading(btn, 'Creating...');
       try {
         const created = await sfApi.createDevice(fd.get('deviceId'), fd.get('name'));
-        secretAlert.innerHTML = `<div class="alert alert-warning mb-0">Secret for <b>${created.deviceId}</b>: <code>${created.secret}</code> — save it now!</div>`;
+        secretAlert.innerHTML = `<div class="alert alert-warning mb-0">Secret for <strong>${created.deviceId}</strong>: <code>${created.secret}</code> — save it now!</div>`;
         e.target.reset();
         sfApi.toast('Device created', 'success');
         await loadDevices();

@@ -54,7 +54,7 @@
             <label class="form-label">Active profile</label>
             <div class="input-group">
               <select id="activeProfileSelect" class="form-select"></select>
-              <button id="activeProfileSave" class="btn btn-outline-secondary" type="button">Apply</button>
+              <button id="activeProfileSave" class="btn btn-ghost" type="button">Apply</button>
             </div>
           </div>
 
@@ -88,7 +88,7 @@
           <h3>Schedule (active profile)</h3>
           <div id="scheduleEditor"></div>
           <div class="mt-3 d-flex gap-2">
-            <button id="addScheduleRow" type="button" class="btn btn-outline-secondary">+ Event</button>
+            <button id="addScheduleRow" type="button" class="btn btn-ghost">+ Event</button>
             <button id="saveSchedule" type="button" class="btn btn-brand">Save schedule</button>
           </div>
         </div>
@@ -105,7 +105,7 @@
             <input name="q" class="form-control" placeholder="Search message..." />
           </div>
           <div class="col-sm-3">
-            <button class="btn btn-outline-secondary w-100" type="submit">Filter</button>
+            <button class="btn btn-ghost w-100" type="submit">Filter</button>
           </div>
         </form>
         <div class="table-responsive">
@@ -122,8 +122,8 @@
           </table>
         </div>
         <div class="d-flex justify-content-end gap-2 mt-2">
-          <button id="logsPrev" class="btn btn-sm btn-outline-secondary" type="button">Prev</button>
-          <button id="logsNext" class="btn btn-sm btn-outline-secondary" type="button">Next</button>
+          <button id="logsPrev" class="btn btn-sm btn-ghost" type="button">Prev</button>
+          <button id="logsNext" class="btn btn-sm btn-ghost" type="button">Next</button>
         </div>
       </div>
 
@@ -221,7 +221,7 @@
           <td>${p.name}</td>
           <td>${p.defaultPortionMs} ms</td>
           <td>
-            <button class="btn btn-sm btn-outline-secondary" data-edit="${p.id}" data-name="${p.name}" data-portion="${p.defaultPortionMs}">Edit</button>
+            <button class="btn btn-sm btn-ghost" data-edit="${p.id}" data-name="${p.name}" data-portion="${p.defaultPortionMs}">Edit</button>
             <button class="btn btn-sm btn-outline-danger" data-del="${p.id}">Delete</button>
           </td>
         </tr>
