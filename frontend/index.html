@@ -8,178 +8,202 @@
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body>
-  <div class="app-shell">
-    <section class="hero mb-4">
-      <h1>Smart Feeder Cloud</h1>
-      <p>Управление устройствами, профилями кормления, командами и логами. Подпись устройства может быть глобально отключена.</p>
-    </section>
 
-    <div id="authBox" class="grid-2 mb-4">
-      <section class="panel">
-        <h2>Вход</h2>
-        <form id="loginForm">
-          <div class="mb-2">
-            <label class="form-label">Email</label>
-            <input name="email" type="email" class="form-control" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Пароль</label>
-            <input name="password" type="password" class="form-control" required minlength="8" />
-          </div>
-          <button class="btn btn-brand" type="submit">Войти</button>
-        </form>
-      </section>
-      <section class="panel">
-        <h2>Регистрация</h2>
-        <form id="registerForm">
-          <div class="mb-2">
-            <label class="form-label">Email</label>
-            <input name="email" type="email" class="form-control" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Пароль</label>
-            <input name="password" type="password" class="form-control" required minlength="8" />
-          </div>
-          <button class="btn btn-outline-dark" type="submit">Создать аккаунт</button>
-        </form>
-      </section>
-    </div>
-
-    <section id="dashboardBox" class="panel d-none">
-      <div class="nav-line">
-        <div>
-          <h2 class="mb-0">Dashboard</h2>
-          <small id="meLabel" class="muted"></small>
-        </div>
-        <button id="logoutBtn" class="btn btn-outline-secondary">Выйти</button>
+  <!-- Auth layout (shown when logged out) -->
+  <div id="authBox" class="auth-layout">
+    <div class="auth-container">
+      <div class="auth-header">
+        <h1>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="4" cy="8" r="2"/><path d="M12 18c-4 0-6-2.5-6-5 0-1.8 1.3-3 3-3h6c1.7 0 3 1.2 3 3 0 2.5-2 5-6 5z"/></svg>
+          Smart Feeder Cloud
+        </h1>
+        <p>Device management, feeding profiles, commands &amp; logs</p>
       </div>
-
-      <div class="grid-2 mb-4">
-        <div>
-          <h3>Добавить устройство</h3>
-          <form id="addDeviceForm" class="row g-2">
-            <div class="col-sm-5">
-              <input name="deviceId" class="form-control" placeholder="feeder-002" required />
+      <div class="auth-grid">
+        <div class="card">
+          <h2>Login</h2>
+          <form id="loginForm">
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input name="email" type="email" class="form-control" required />
             </div>
-            <div class="col-sm-5">
-              <input name="name" class="form-control" placeholder="Kitchen feeder" required />
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input name="password" type="password" class="form-control" required minlength="8" />
             </div>
-            <div class="col-sm-2">
-              <button type="submit" class="btn btn-brand w-100">Создать</button>
-            </div>
+            <button class="btn btn-brand w-100" type="submit">Sign in</button>
           </form>
-          <small class="muted">Секрет устройства показывается один раз сразу после создания.</small>
-          <div id="secretAlert" class="mt-2"></div>
         </div>
-        <div class="panel">
-          <strong>Demo seed</strong>
-          <div class="muted">email: <code>demo@smartfeeder.local</code></div>
-          <div class="muted">password: <code>demo12345</code></div>
-          <div class="muted">device: <code>feeder-001</code></div>
+        <div class="card">
+          <h2>Register</h2>
+          <form id="registerForm">
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input name="email" type="email" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input name="password" type="password" class="form-control" required minlength="8" />
+            </div>
+            <button class="btn btn-outline-secondary w-100" type="submit">Create account</button>
+          </form>
+          <div class="mt-3" style="font-size:.8rem;color:var(--ink-muted)">
+            Demo: <code>demo@smartfeeder.local</code> / <code>demo12345</code>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App layout (shown when logged in) -->
+  <div id="appBox" class="app-layout d-none">
+    <div id="sidebarMount"></div>
+    <main class="main-content page-fade">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <p id="meLabel"></p>
       </div>
 
-      <div class="table-responsive">
-        <table class="table align-middle">
-          <thead>
-            <tr>
-              <th>Устройство</th>
-              <th>Статус</th>
-              <th>Last seen</th>
-              <th>RSSI</th>
-              <th>FW</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="deviceRows"></tbody>
-        </table>
+      <div class="card mb-4">
+        <div class="card-header-bar">
+          <h3>Add device</h3>
+        </div>
+        <form id="addDeviceForm" class="row g-2">
+          <div class="col-sm-5">
+            <input name="deviceId" class="form-control" placeholder="feeder-002" required />
+          </div>
+          <div class="col-sm-5">
+            <input name="name" class="form-control" placeholder="Kitchen feeder" required />
+          </div>
+          <div class="col-sm-2">
+            <button type="submit" class="btn btn-brand w-100">Create</button>
+          </div>
+        </form>
+        <div id="secretAlert" class="mt-2"></div>
       </div>
-    </section>
+
+      <div id="deviceGrid" class="device-grid"></div>
+    </main>
   </div>
 
   <script src="/assets/app.js"></script>
   <script>
     const authBox = document.getElementById('authBox');
-    const dashboardBox = document.getElementById('dashboardBox');
+    const appBox = document.getElementById('appBox');
     const meLabel = document.getElementById('meLabel');
-    const deviceRows = document.getElementById('deviceRows');
+    const deviceGrid = document.getElementById('deviceGrid');
     const secretAlert = document.getElementById('secretAlert');
+    const sidebarMount = document.getElementById('sidebarMount');
+
+    let currentUser = null;
+    let devices = [];
+
+    function renderSidebarNow() {
+      sidebarMount.innerHTML = sfApi.renderSidebar({
+        activePage: 'dashboard',
+        devices: devices,
+        userEmail: currentUser ? currentUser.email : ''
+      });
+    }
 
     async function refreshAuthState() {
       try {
-        const me = await sfApi.me();
-        meLabel.textContent = `Вошли как ${me.email}`;
+        currentUser = await sfApi.me();
+        meLabel.textContent = currentUser.email;
         authBox.classList.add('d-none');
-        dashboardBox.classList.remove('d-none');
+        appBox.classList.remove('d-none');
         await loadDevices();
       } catch {
         authBox.classList.remove('d-none');
-        dashboardBox.classList.add('d-none');
+        appBox.classList.add('d-none');
       }
     }
 
     async function loadDevices() {
-      const devices = await sfApi.listDevices();
-      deviceRows.innerHTML = devices.map(d => `
-        <tr>
-          <td>
-            <div><strong>${d.name}</strong></div>
-            <small class="muted">${d.deviceId}</small>
-          </td>
-          <td>${sfApi.onlineBadge(d.lastSeenAt)}</td>
-          <td>${sfApi.fmtTs(d.lastSeenAt)}</td>
-          <td>${d.rssi ?? '-'}</td>
-          <td>${d.firmwareVersion ?? '-'}</td>
-          <td>
-            <a class="btn btn-sm btn-outline-dark" href="/device.html?id=${encodeURIComponent(d.deviceId)}">Открыть</a>
-            <a class="btn btn-sm btn-outline-secondary" href="/security.html?id=${encodeURIComponent(d.deviceId)}">Security</a>
-          </td>
-        </tr>
-      `).join('');
+      devices = await sfApi.listDevices();
+      renderSidebarNow();
+      deviceGrid.innerHTML = devices.map(d => {
+        const online = sfApi.isOnline(d.lastSeenAt);
+        return `
+          <a class="device-card" href="/device.html?id=${encodeURIComponent(d.deviceId)}">
+            <div style="display:flex;justify-content:space-between;align-items:start">
+              <div>
+                <div class="device-card-name">${d.name}</div>
+                <div class="device-card-id">${d.deviceId}</div>
+              </div>
+              ${sfApi.onlineBadge(d.lastSeenAt)}
+            </div>
+            <div class="device-card-stats">
+              <div>
+                <span class="stat-label">Last seen</span>
+                ${sfApi.fmtTs(d.lastSeenAt)}
+              </div>
+              <div>
+                <span class="stat-label">Signal</span>
+                ${sfApi.signalBars(d.rssi)}
+              </div>
+              <div>
+                <span class="stat-label">Firmware</span>
+                ${d.firmwareVersion || '—'}
+              </div>
+            </div>
+            <div class="device-card-actions" onclick="event.stopPropagation()">
+              <a class="btn btn-sm btn-outline-secondary" href="/device.html?id=${encodeURIComponent(d.deviceId)}">Open</a>
+              <a class="btn btn-sm btn-outline-secondary" href="/security.html?id=${encodeURIComponent(d.deviceId)}">Security</a>
+            </div>
+          </a>`;
+      }).join('');
     }
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
+      const btn = e.target.querySelector('button[type=submit]');
+      sfApi.showLoading(btn, 'Signing in...');
       try {
         await sfApi.login(fd.get('email'), fd.get('password'));
         e.target.reset();
+        sfApi.toast('Logged in successfully', 'success');
         await refreshAuthState();
       } catch (err) {
-        alert(err.message);
+        sfApi.toast(err.message, 'error');
+      } finally {
+        sfApi.hideLoading(btn);
       }
     });
 
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
+      const btn = e.target.querySelector('button[type=submit]');
+      sfApi.showLoading(btn, 'Creating...');
       try {
         await sfApi.register(fd.get('email'), fd.get('password'));
         e.target.reset();
+        sfApi.toast('Account created! Logging in...', 'success');
         await refreshAuthState();
       } catch (err) {
-        alert(err.message);
-      }
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      try {
-        await sfApi.logout();
+        sfApi.toast(err.message, 'error');
       } finally {
-        await refreshAuthState();
+        sfApi.hideLoading(btn);
       }
     });
 
     document.getElementById('addDeviceForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
+      const btn = e.target.querySelector('button[type=submit]');
+      sfApi.showLoading(btn, 'Creating...');
       try {
         const created = await sfApi.createDevice(fd.get('deviceId'), fd.get('name'));
-        secretAlert.innerHTML = `<div class="alert alert-warning">Secret для <b>${created.deviceId}</b>: <code>${created.secret}</code></div>`;
+        secretAlert.innerHTML = `<div class="alert alert-warning mb-0">Secret for <b>${created.deviceId}</b>: <code>${created.secret}</code> — save it now!</div>`;
         e.target.reset();
+        sfApi.toast('Device created', 'success');
         await loadDevices();
       } catch (err) {
-        alert(err.message);
+        sfApi.toast(err.message, 'error');
+      } finally {
+        sfApi.hideLoading(btn);
       }
     });
 

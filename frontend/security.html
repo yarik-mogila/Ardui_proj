@@ -8,44 +8,78 @@
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body>
-  <div class="app-shell">
-    <div class="nav-line">
-      <a class="pill-link" href="/index.html">← Dashboard</a>
-      <a id="deviceLink" class="pill-link" href="#">Device page</a>
-    </div>
+  <div class="app-layout">
+    <div id="sidebarMount"></div>
+    <main class="main-content page-fade">
 
-    <section class="hero mb-3">
-      <h1 id="title">Security</h1>
-      <p id="meta" class="muted mb-0"></p>
-    </section>
+      <nav class="breadcrumb-nav">
+        <a href="/index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <a id="deviceLink" href="#">Device</a>
+        <span class="sep">/</span>
+        <span>Security</span>
+      </nav>
 
-    <section class="panel mb-3">
-      <h3>Device auth mode</h3>
-      <div id="signState"></div>
-      <small class="muted">Подпись и replay-проверка переключаются глобальным флагом сервера.</small>
-    </section>
+      <div class="page-header">
+        <h1 id="title">Security</h1>
+        <p id="meta"></p>
+      </div>
 
-    <section class="panel mb-3">
-      <h3>Warnings</h3>
-      <div id="warnBox"></div>
-    </section>
+      <div class="card mb-3">
+        <h3>Device auth mode</h3>
+        <div id="signState"></div>
+        <small class="muted">Signature and replay protection are toggled by a global server flag.</small>
+      </div>
 
-    <section class="panel">
-      <h3>Rotate secret</h3>
-      <p class="muted">После ротации старый секрет перестанет работать.</p>
-      <button id="rotateBtn" class="btn btn-outline-danger">Rotate secret</button>
-      <div id="rotateResult" class="mt-3"></div>
-    </section>
+      <div class="card mb-3">
+        <h3>Warnings</h3>
+        <div id="warnBox"></div>
+      </div>
+
+      <div class="danger-zone">
+        <h3>Rotate secret</h3>
+        <p class="muted">After rotation the old secret will stop working immediately. Make sure to update the device firmware.</p>
+        <button id="rotateBtn" class="btn btn-outline-danger">Rotate secret</button>
+        <div id="rotateResult" class="mt-3"></div>
+      </div>
+
+    </main>
   </div>
 
   <script src="/assets/app.js"></script>
   <script>
     const deviceId = sfApi.qp('id');
     if (!deviceId) {
-      alert('missing ?id=...');
+      sfApi.toast('Missing device ID', 'error');
       location.href = '/index.html';
     }
     document.getElementById('deviceLink').href = `/device.html?id=${encodeURIComponent(deviceId)}`;
+
+    let devices = [];
+    let currentUser = null;
+
+    async function init() {
+      try {
+        currentUser = await sfApi.me();
+      } catch {
+        location.href = '/index.html';
+        return;
+      }
+      try {
+        devices = await sfApi.listDevices();
+      } catch { devices = []; }
+      renderSidebarNow();
+      await load();
+    }
+
+    function renderSidebarNow() {
+      document.getElementById('sidebarMount').innerHTML = sfApi.renderSidebar({
+        activePage: 'security',
+        devices: devices,
+        currentDeviceId: deviceId,
+        userEmail: currentUser ? currentUser.email : ''
+      });
+    }
 
     async function load() {
       const [details, sec] = await Promise.all([
@@ -53,30 +87,37 @@
         sfApi.securityConfig()
       ]);
 
-      document.getElementById('title').textContent = `Security: ${details.name} (${details.deviceId})`;
-      document.getElementById('meta').innerHTML = `${sfApi.onlineBadge(details.lastSeenAt)} | lastSeen: ${sfApi.fmtTs(details.lastSeenAt)}`;
+      document.getElementById('title').textContent = `Security: ${details.name}`;
+      document.getElementById('deviceLink').textContent = details.name;
+      document.getElementById('meta').innerHTML = `${sfApi.onlineBadge(details.lastSeenAt)} &nbsp; Last seen: ${sfApi.fmtTs(details.lastSeenAt)}`;
 
       document.getElementById('signState').innerHTML = sec.signatureEnabled
-        ? '<div class="alert alert-success">Signature: ENABLED. HMAC + nonce replay protection are active.</div>'
-        : '<div class="alert alert-warning">Signature: DISABLED. HMAC and nonce checks are bypassed by server flag.</div>';
+        ? '<div class="alert alert-success mb-0">Signature: <strong>ENABLED</strong>. HMAC + nonce replay protection are active.</div>'
+        : '<div class="alert alert-warning mb-0">Signature: <strong>DISABLED</strong>. HMAC and nonce checks are bypassed by server flag.</div>';
 
       const offline = !details.lastSeenAt || (Date.now() - new Date(details.lastSeenAt).getTime() > 120000);
       document.getElementById('warnBox').innerHTML = offline
-        ? '<div class="warn-box">Устройство давно не в сети (более 2 минут).</div>'
-        : '<div class="alert alert-success">Устройство в сети.</div>';
+        ? '<div class="warn-box">Device has been offline for more than 2 minutes.</div>'
+        : '<div class="alert alert-success mb-0">Device is online.</div>';
     }
 
     document.getElementById('rotateBtn').addEventListener('click', async () => {
-      if (!confirm('Rotate secret now?')) return;
+      if (!confirm('Rotate secret now? The old secret will stop working immediately.')) return;
+      const btn = document.getElementById('rotateBtn');
+      sfApi.showLoading(btn, 'Rotating...');
       try {
         const res = await sfApi.rotateSecret(deviceId);
-        document.getElementById('rotateResult').innerHTML = `<div class="alert alert-warning">Новый secret: <code>${res.secret}</code></div>`;
+        document.getElementById('rotateResult').innerHTML =
+          `<div class="alert alert-warning mb-0">New secret: <code>${res.secret}</code> — save it now!</div>`;
+        sfApi.toast('Secret rotated', 'success');
       } catch (err) {
-        alert(err.message);
+        sfApi.toast(err.message, 'error');
+      } finally {
+        sfApi.hideLoading(btn);
       }
     });
 
-    sfApi.me().then(load).catch(() => location.href = '/index.html');
+    init();
   </script>
 </body>
 </html>

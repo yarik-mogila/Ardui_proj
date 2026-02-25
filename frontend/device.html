@@ -8,142 +8,185 @@
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body>
-  <div class="app-shell">
-    <div class="nav-line">
-      <a class="pill-link" href="/index.html">← Dashboard</a>
-      <a id="securityLink" class="pill-link" href="#">Security</a>
-    </div>
+  <div class="app-layout">
+    <div id="sidebarMount"></div>
+    <main class="main-content page-fade">
 
-    <section class="hero mb-3">
-      <h1 id="deviceTitle">Device</h1>
-      <p id="deviceMeta" class="mb-0 muted"></p>
-    </section>
+      <nav class="breadcrumb-nav">
+        <a href="/index.html">Dashboard</a>
+        <span class="sep">/</span>
+        <span id="breadcrumbName">Device</span>
+      </nav>
 
-    <div class="grid-2 mb-3">
-      <section class="panel">
-        <h3>Последний статус</h3>
-        <pre class="json-view" id="statusJson">{}</pre>
-      </section>
+      <div class="page-header" style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:12px">
+        <div>
+          <h1 id="deviceTitle">Device</h1>
+          <p id="deviceMeta"></p>
+        </div>
+      </div>
 
-      <section class="panel">
-        <h3>Команды</h3>
-        <form id="feedNowForm" class="row g-2 mb-2">
-          <div class="col-sm-8">
-            <input type="number" name="portionMs" min="1" class="form-control" placeholder="portionMs (optional)" />
+      <!-- Status + Commands -->
+      <div class="grid-2 mb-3">
+        <div class="card">
+          <h3>Last status</h3>
+          <pre class="json-view" id="statusJson">{}</pre>
+        </div>
+
+        <div class="card">
+          <h3>Commands</h3>
+          <form id="feedNowForm" class="row g-2 mb-2">
+            <div class="col-sm-8">
+              <input type="number" name="portionMs" min="1" class="form-control" placeholder="portionMs (optional)" />
+            </div>
+            <div class="col-sm-4">
+              <button class="btn btn-brand w-100" type="submit">Feed now</button>
+            </div>
+          </form>
+          <small class="muted">If empty, the server uses the active profile's defaultPortionMs.</small>
+        </div>
+      </div>
+
+      <!-- Profiles + Schedule -->
+      <div class="grid-2 mb-3">
+        <div class="card">
+          <h3>Profiles</h3>
+          <div class="mb-2">
+            <label class="form-label">Active profile</label>
+            <div class="input-group">
+              <select id="activeProfileSelect" class="form-select"></select>
+              <button id="activeProfileSave" class="btn btn-outline-secondary" type="button">Apply</button>
+            </div>
           </div>
-          <div class="col-sm-4">
-            <button class="btn btn-brand w-100" type="submit">Feed now</button>
-          </div>
-        </form>
-        <small class="muted">Если порция пустая, сервер использует defaultPortionMs активного профиля.</small>
-      </section>
-    </div>
 
-    <div class="grid-2 mb-3">
-      <section class="panel">
-        <h3>Профили</h3>
-        <div class="mb-2">
-          <label class="form-label">Active profile</label>
-          <div class="input-group">
-            <select id="activeProfileSelect" class="form-select"></select>
-            <button id="activeProfileSave" class="btn btn-outline-dark" type="button">Применить</button>
+          <form id="createProfileForm" class="row g-2 mt-3">
+            <div class="col-sm-5">
+              <input name="name" class="form-control" placeholder="Profile name" required />
+            </div>
+            <div class="col-sm-4">
+              <input name="defaultPortionMs" type="number" min="1" class="form-control" placeholder="Portion (ms)" required />
+            </div>
+            <div class="col-sm-3">
+              <button class="btn btn-brand w-100" type="submit">Add</button>
+            </div>
+          </form>
+
+          <div class="table-responsive mt-3">
+            <table class="table mb-0">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Portion</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="profileRows"></tbody>
+            </table>
           </div>
         </div>
 
-        <form id="createProfileForm" class="row g-2 mt-2">
-          <div class="col-sm-5">
-            <input name="name" class="form-control" placeholder="profile name" required />
+        <div class="card">
+          <h3>Schedule (active profile)</h3>
+          <div id="scheduleEditor"></div>
+          <div class="mt-3 d-flex gap-2">
+            <button id="addScheduleRow" type="button" class="btn btn-outline-secondary">+ Event</button>
+            <button id="saveSchedule" type="button" class="btn btn-brand">Save schedule</button>
           </div>
-          <div class="col-sm-4">
-            <input name="defaultPortionMs" type="number" min="1" class="form-control" placeholder="defaultPortionMs" required />
+        </div>
+      </div>
+
+      <!-- Logs -->
+      <div class="card">
+        <h3>Logs</h3>
+        <form id="logFilterForm" class="row g-2 mb-3">
+          <div class="col-sm-3">
+            <input name="type" class="form-control" placeholder="type (AUTO_FEED...)" />
+          </div>
+          <div class="col-sm-6">
+            <input name="q" class="form-control" placeholder="Search message..." />
           </div>
           <div class="col-sm-3">
-            <button class="btn btn-brand w-100" type="submit">Добавить</button>
+            <button class="btn btn-outline-secondary w-100" type="submit">Filter</button>
           </div>
         </form>
-
-        <table class="table mt-3">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Portion</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="profileRows"></tbody>
-        </table>
-      </section>
-
-      <section class="panel">
-        <h3>Расписание активного профиля</h3>
-        <div id="scheduleEditor"></div>
-        <div class="mt-2 d-flex gap-2">
-          <button id="addScheduleRow" type="button" class="btn btn-outline-secondary">+ Событие</button>
-          <button id="saveSchedule" type="button" class="btn btn-brand">Сохранить</button>
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Type</th>
+                <th>Message</th>
+                <th>Meta</th>
+              </tr>
+            </thead>
+            <tbody id="logRows"></tbody>
+          </table>
         </div>
-      </section>
-    </div>
-
-    <section class="panel">
-      <h3>Логи</h3>
-      <form id="logFilterForm" class="row g-2 mb-3">
-        <div class="col-sm-3">
-          <input name="type" class="form-control" placeholder="type (AUTO_FEED...)" />
+        <div class="d-flex justify-content-end gap-2 mt-2">
+          <button id="logsPrev" class="btn btn-sm btn-outline-secondary" type="button">Prev</button>
+          <button id="logsNext" class="btn btn-sm btn-outline-secondary" type="button">Next</button>
         </div>
-        <div class="col-sm-6">
-          <input name="q" class="form-control" placeholder="поиск по message" />
-        </div>
-        <div class="col-sm-3">
-          <button class="btn btn-outline-dark w-100" type="submit">Фильтр</button>
-        </div>
-      </form>
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>Type</th>
-              <th>Message</th>
-              <th>Meta</th>
-            </tr>
-          </thead>
-          <tbody id="logRows"></tbody>
-        </table>
       </div>
-      <div class="d-flex justify-content-end gap-2">
-        <button id="logsPrev" class="btn btn-sm btn-outline-secondary" type="button">Prev</button>
-        <button id="logsNext" class="btn btn-sm btn-outline-secondary" type="button">Next</button>
-      </div>
-    </section>
+
+    </main>
   </div>
 
   <script src="/assets/app.js"></script>
   <script>
     const deviceId = sfApi.qp('id');
     if (!deviceId) {
-      alert('missing ?id=...');
+      sfApi.toast('Missing device ID', 'error');
       location.href = '/index.html';
     }
-
-    document.getElementById('securityLink').href = `/security.html?id=${encodeURIComponent(deviceId)}`;
 
     let currentDetails = null;
     let selectedProfileId = null;
     let scheduleRows = [];
     let logsPage = 0;
+    let devices = [];
+    let currentUser = null;
+
+    async function init() {
+      try {
+        currentUser = await sfApi.me();
+      } catch {
+        location.href = '/index.html';
+        return;
+      }
+      try {
+        devices = await sfApi.listDevices();
+      } catch { devices = []; }
+      await loadDevice();
+    }
+
+    function renderSidebarNow() {
+      document.getElementById('sidebarMount').innerHTML = sfApi.renderSidebar({
+        activePage: 'device',
+        devices: devices,
+        currentDeviceId: deviceId,
+        userEmail: currentUser ? currentUser.email : ''
+      });
+    }
 
     function renderScheduleEditor() {
       const root = document.getElementById('scheduleEditor');
       if (!scheduleRows.length) {
-        root.innerHTML = '<div class="muted">Нет событий</div>';
+        root.innerHTML = '<div class="muted">No scheduled events</div>';
         return;
       }
       root.innerHTML = scheduleRows.map((row, idx) => `
         <div class="row g-2 mb-2" data-row="${idx}">
-          <div class="col-4"><input class="form-control" data-k="hh" type="number" min="0" max="23" value="${row.hh}"></div>
-          <div class="col-4"><input class="form-control" data-k="mm" type="number" min="0" max="59" value="${row.mm}"></div>
-          <div class="col-3"><input class="form-control" data-k="portionMs" type="number" min="1" value="${row.portionMs}"></div>
-          <div class="col-1"><button class="btn btn-outline-danger w-100" data-del="${idx}">×</button></div>
+          <div class="col-4">
+            <input class="form-control" data-k="hh" type="number" min="0" max="23" value="${row.hh}" placeholder="HH">
+          </div>
+          <div class="col-4">
+            <input class="form-control" data-k="mm" type="number" min="0" max="59" value="${row.mm}" placeholder="MM">
+          </div>
+          <div class="col-3">
+            <input class="form-control" data-k="portionMs" type="number" min="1" value="${row.portionMs}" placeholder="ms">
+          </div>
+          <div class="col-1">
+            <button class="btn btn-outline-danger w-100" data-del="${idx}">&times;</button>
+          </div>
         </div>
       `).join('');
 
@@ -158,8 +201,7 @@
       root.querySelectorAll('button[data-del]').forEach((btn) => {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
-          const idx = Number(btn.dataset.del);
-          scheduleRows.splice(idx, 1);
+          scheduleRows.splice(Number(btn.dataset.del), 1);
           renderScheduleEditor();
         });
       });
@@ -170,12 +212,14 @@
       const rows = document.getElementById('profileRows');
       const profiles = currentDetails.profiles || [];
 
-      select.innerHTML = profiles.map(p => `<option value="${p.name}" ${p.name === currentDetails.activeProfile ? 'selected' : ''}>${p.name}</option>`).join('');
+      select.innerHTML = profiles.map(p =>
+        `<option value="${p.name}" ${p.name === currentDetails.activeProfile ? 'selected' : ''}>${p.name}</option>`
+      ).join('');
 
       rows.innerHTML = profiles.map(p => `
         <tr>
           <td>${p.name}</td>
-          <td>${p.defaultPortionMs}</td>
+          <td>${p.defaultPortionMs} ms</td>
           <td>
             <button class="btn btn-sm btn-outline-secondary" data-edit="${p.id}" data-name="${p.name}" data-portion="${p.defaultPortionMs}">Edit</button>
             <button class="btn btn-sm btn-outline-danger" data-del="${p.id}">Delete</button>
@@ -185,32 +229,34 @@
 
       rows.querySelectorAll('button[data-del]').forEach((btn) => {
         btn.addEventListener('click', async () => {
-          if (!confirm('Удалить профиль?')) return;
+          if (!confirm('Delete this profile?')) return;
           try {
             await sfApi.deleteProfile(btn.dataset.del);
+            sfApi.toast('Profile deleted', 'success');
             await loadDevice();
           } catch (err) {
-            alert(err.message);
+            sfApi.toast(err.message, 'error');
           }
         });
       });
 
       rows.querySelectorAll('button[data-edit]').forEach((btn) => {
         btn.addEventListener('click', async () => {
-          const newName = prompt('Новое имя профиля', btn.dataset.name);
+          const newName = prompt('New profile name', btn.dataset.name);
           if (!newName) return;
-          const newPortionRaw = prompt('Новая default порция (ms)', btn.dataset.portion);
+          const newPortionRaw = prompt('New default portion (ms)', btn.dataset.portion);
           if (!newPortionRaw) return;
           const newPortion = Number(newPortionRaw);
           if (!Number.isFinite(newPortion) || newPortion <= 0) {
-            alert('Некорректная порция');
+            sfApi.toast('Invalid portion value', 'error');
             return;
           }
           try {
             await sfApi.updateProfile(btn.dataset.edit, { name: newName, defaultPortionMs: newPortion });
+            sfApi.toast('Profile updated', 'success');
             await loadDevice();
           } catch (err) {
-            alert(err.message);
+            sfApi.toast(err.message, 'error');
           }
         });
       });
@@ -225,9 +271,12 @@
 
     async function loadDevice() {
       currentDetails = await sfApi.getDevice(deviceId);
-      document.getElementById('deviceTitle').textContent = `${currentDetails.name} (${currentDetails.deviceId})`;
-      document.getElementById('deviceMeta').innerHTML = `${sfApi.onlineBadge(currentDetails.lastSeenAt)} | lastSeen: ${sfApi.fmtTs(currentDetails.lastSeenAt)} | active: ${currentDetails.activeProfile || '-'}`;
+      document.getElementById('deviceTitle').textContent = currentDetails.name;
+      document.getElementById('breadcrumbName').textContent = currentDetails.name;
+      document.getElementById('deviceMeta').innerHTML =
+        `${sfApi.onlineBadge(currentDetails.lastSeenAt)} &nbsp; Last seen: ${sfApi.fmtTs(currentDetails.lastSeenAt)} &nbsp; Active profile: ${currentDetails.activeProfile || '—'}`;
       document.getElementById('statusJson').textContent = JSON.stringify(currentDetails.status || {}, null, 2);
+      renderSidebarNow();
       renderProfiles();
       await loadLogs();
     }
@@ -237,10 +286,10 @@
       const logs = await sfApi.listLogs(deviceId, filterFd.get('type'), filterFd.get('q'), logsPage, 50);
       document.getElementById('logRows').innerHTML = logs.map(l => `
         <tr>
-          <td>${sfApi.fmtTs(l.ts)}</td>
-          <td>${l.type}</td>
+          <td style="white-space:nowrap">${sfApi.fmtTs(l.ts)}</td>
+          <td><span class="badge bg-secondary">${l.type}</span></td>
           <td>${l.message}</td>
-          <td><code>${JSON.stringify(l.meta)}</code></td>
+          <td><code style="font-size:.78rem">${JSON.stringify(l.meta)}</code></td>
         </tr>
       `).join('');
     }
@@ -249,21 +298,27 @@
       const profileName = document.getElementById('activeProfileSelect').value;
       try {
         await sfApi.setActiveProfile(deviceId, profileName);
+        sfApi.toast('Active profile updated', 'success');
         await loadDevice();
       } catch (err) {
-        alert(err.message);
+        sfApi.toast(err.message, 'error');
       }
     });
 
     document.getElementById('createProfileForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
+      const btn = e.target.querySelector('button[type=submit]');
+      sfApi.showLoading(btn, 'Adding...');
       try {
         await sfApi.createProfile(deviceId, fd.get('name'), Number(fd.get('defaultPortionMs')));
         e.target.reset();
+        sfApi.toast('Profile created', 'success');
         await loadDevice();
       } catch (err) {
-        alert(err.message);
+        sfApi.toast(err.message, 'error');
+      } finally {
+        sfApi.hideLoading(btn);
       }
     });
 
@@ -274,14 +329,19 @@
 
     document.getElementById('saveSchedule').addEventListener('click', async () => {
       if (!selectedProfileId) {
-        alert('Нет выбранного профиля');
+        sfApi.toast('No profile selected', 'warning');
         return;
       }
+      const btn = document.getElementById('saveSchedule');
+      sfApi.showLoading(btn, 'Saving...');
       try {
         await sfApi.replaceSchedule(selectedProfileId, scheduleRows);
+        sfApi.toast('Schedule saved', 'success');
         await loadDevice();
       } catch (err) {
-        alert(err.message);
+        sfApi.toast(err.message, 'error');
+      } finally {
+        sfApi.hideLoading(btn);
       }
     });
 
@@ -289,11 +349,15 @@
       e.preventDefault();
       const fd = new FormData(e.target);
       const portionVal = fd.get('portionMs');
+      const btn = e.target.querySelector('button[type=submit]');
+      sfApi.showLoading(btn, 'Sending...');
       try {
         await sfApi.feedNow(deviceId, portionVal ? Number(portionVal) : null);
-        alert('Команда FEED_NOW добавлена в очередь');
+        sfApi.toast('FEED_NOW command queued', 'success');
       } catch (err) {
-        alert(err.message);
+        sfApi.toast(err.message, 'error');
+      } finally {
+        sfApi.hideLoading(btn);
       }
     });
 
@@ -313,7 +377,7 @@
       await loadLogs();
     });
 
-    sfApi.me().then(loadDevice).catch(() => location.href = '/index.html');
+    init();
   </script>
 </body>
 </html>
