@@ -54,21 +54,10 @@
             </div>
             <button class="btn btn-brand w-100" type="submit">Sign in</button>
           </form>
-        </section>
-
-        <section class="auth-card">
-          <h2>Register</h2>
-          <form id="registerForm">
-            <div class="mb-3">
-              <label class="form-label">Email</label>
-              <input name="email" type="email" class="form-control" required />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Password</label>
-              <input name="password" type="password" class="form-control" required minlength="8" />
-            </div>
-            <button class="btn btn-ghost w-100" type="submit">Create account</button>
-          </form>
+          <div class="auth-actions-row">
+            <span class="muted">Нет аккаунта?</span>
+            <a href="/register.html">Создать аккаунт</a>
+          </div>
           <div class="hint">
             Demo: <code>demo@smartfeeder.local</code> / <code>demo12345</code>
           </div>
@@ -238,23 +227,6 @@
         await sfApi.login(fd.get('email'), fd.get('password'));
         e.target.reset();
         sfApi.toast('Logged in successfully', 'success');
-        await refreshAuthState();
-      } catch (err) {
-        sfApi.toast(err.message, 'error');
-      } finally {
-        sfApi.hideLoading(btn);
-      }
-    });
-
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const btn = e.target.querySelector('button[type=submit]');
-      sfApi.showLoading(btn, 'Creating account...');
-      try {
-        await sfApi.register(fd.get('email'), fd.get('password'));
-        e.target.reset();
-        sfApi.toast('Account created', 'success');
         await refreshAuthState();
       } catch (err) {
         sfApi.toast(err.message, 'error');
