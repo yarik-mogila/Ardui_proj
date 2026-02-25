@@ -48,11 +48,7 @@ package.json
 
 ## Быстрый старт
 
-1. Подготовить env:
-
-```bash
-cp .env.example .env
-```
+1. Задать переменные в корневом файле `.env` (он уже создан с дефолтными значениями в репозитории).
 
 2. Запустить всё:
 
@@ -112,7 +108,7 @@ curl -X POST http://localhost:8080/api/device/poll \
 
 ## Пример device poll (signature ON)
 
-1. Включить подпись в `.env` и перезапустить `npm run up`.
+1. Включить подпись в `.env` (`DEVICE_AUTH_SIGNATURE_ENABLED=true`) и перезапустить `npm run up`.
 2. Использовать секрет устройства.
 
 ```bash
