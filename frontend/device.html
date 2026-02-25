@@ -11,46 +11,74 @@
   <div class="app-layout">
     <div id="sidebarMount"></div>
     <main class="main-content page-fade">
-
       <nav class="breadcrumb-nav">
         <a href="/index.html">Dashboard</a>
         <span class="sep">/</span>
         <span id="breadcrumbName">Device</span>
       </nav>
 
-      <div class="page-header" style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:12px">
-        <div>
+      <section class="card mb-4 device-hero">
+        <div class="device-hero-copy">
           <h1 id="deviceTitle">Device</h1>
-          <p id="deviceMeta"></p>
+          <p>Оперативное управление кормушкой, профилями и журналами событий.</p>
+          <div id="deviceMeta" class="device-meta-cluster"></div>
         </div>
-      </div>
+        <div class="device-hero-actions">
+          <a id="securityPageLink" class="btn btn-ghost" href="#">Security</a>
+        </div>
+        <div class="device-kpi-strip">
+          <article class="device-kpi">
+            <span>Connectivity</span>
+            <strong id="deviceHealth">Offline</strong>
+          </article>
+          <article class="device-kpi">
+            <span>Last heartbeat</span>
+            <strong id="deviceHeartbeat">never</strong>
+          </article>
+          <article class="device-kpi">
+            <span>Signal</span>
+            <strong id="deviceRssi">No data</strong>
+          </article>
+          <article class="device-kpi">
+            <span>Firmware</span>
+            <strong id="deviceFw">-</strong>
+          </article>
+        </div>
+      </section>
 
-      <!-- Status + Commands -->
-      <div class="grid-2 mb-3">
-        <div class="card">
-          <h3>Last status</h3>
+      <div class="grid-2 mb-4">
+        <section class="card">
+          <div class="card-header-bar">
+            <h3>Last status payload</h3>
+            <small class="muted">Device heartbeat snapshot</small>
+          </div>
           <pre class="json-view" id="statusJson">{}</pre>
-        </div>
+        </section>
 
-        <div class="card">
-          <h3>Commands</h3>
+        <section class="card">
+          <div class="card-header-bar">
+            <h3>Quick command</h3>
+            <small class="muted">Queue manual feed instantly</small>
+          </div>
           <form id="feedNowForm" class="row g-2 mb-2">
             <div class="col-sm-8">
-              <input type="number" name="portionMs" min="1" class="form-control" placeholder="portionMs (optional)" />
+              <input type="number" name="portionMs" min="1" class="form-control" placeholder="Portion in ms (optional)" />
             </div>
             <div class="col-sm-4">
               <button class="btn btn-brand w-100" type="submit">Feed now</button>
             </div>
           </form>
-          <small class="muted">If empty, the server uses the active profile's defaultPortionMs.</small>
-        </div>
+          <p class="schedule-note">Если значение пустое, используется `defaultPortionMs` активного профиля.</p>
+        </section>
       </div>
 
-      <!-- Profiles + Schedule -->
-      <div class="grid-2 mb-3">
-        <div class="card">
-          <h3>Profiles</h3>
-          <div class="mb-2">
+      <div class="grid-2 mb-4">
+        <section class="card">
+          <div class="card-header-bar">
+            <h3>Profiles</h3>
+          </div>
+
+          <div class="mb-3">
             <label class="form-label">Active profile</label>
             <div class="input-group">
               <select id="activeProfileSelect" class="form-select"></select>
@@ -58,7 +86,7 @@
             </div>
           </div>
 
-          <form id="createProfileForm" class="row g-2 mt-3">
+          <form id="createProfileForm" class="row g-2">
             <div class="col-sm-5">
               <input name="name" class="form-control" placeholder="Profile name" required />
             </div>
@@ -71,7 +99,7 @@
           </form>
 
           <div class="table-responsive mt-3">
-            <table class="table mb-0">
+            <table class="table">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -82,32 +110,40 @@
               <tbody id="profileRows"></tbody>
             </table>
           </div>
-        </div>
+        </section>
 
-        <div class="card">
-          <h3>Schedule (active profile)</h3>
+        <section class="card">
+          <div class="card-header-bar">
+            <h3>Schedule (active profile)</h3>
+            <small class="muted">24h format</small>
+          </div>
+
           <div id="scheduleEditor"></div>
           <div class="mt-3 d-flex gap-2">
             <button id="addScheduleRow" type="button" class="btn btn-ghost">+ Event</button>
             <button id="saveSchedule" type="button" class="btn btn-brand">Save schedule</button>
           </div>
-        </div>
+        </section>
       </div>
 
-      <!-- Logs -->
-      <div class="card">
-        <h3>Logs</h3>
+      <section class="card">
+        <div class="card-header-bar">
+          <h3>Event logs</h3>
+          <small class="muted">Up to 50 records per page</small>
+        </div>
+
         <form id="logFilterForm" class="row g-2 mb-3">
           <div class="col-sm-3">
-            <input name="type" class="form-control" placeholder="type (AUTO_FEED...)" />
+            <input name="type" class="form-control" placeholder="Type (AUTO_FEED...)" />
           </div>
           <div class="col-sm-6">
-            <input name="q" class="form-control" placeholder="Search message..." />
+            <input name="q" class="form-control" placeholder="Search in message" />
           </div>
           <div class="col-sm-3">
             <button class="btn btn-ghost w-100" type="submit">Filter</button>
           </div>
         </form>
+
         <div class="table-responsive">
           <table class="table mb-0">
             <thead>
@@ -121,12 +157,12 @@
             <tbody id="logRows"></tbody>
           </table>
         </div>
-        <div class="d-flex justify-content-end gap-2 mt-2">
+
+        <div class="log-pagination">
           <button id="logsPrev" class="btn btn-sm btn-ghost" type="button">Prev</button>
           <button id="logsNext" class="btn btn-sm btn-ghost" type="button">Next</button>
         </div>
-      </div>
-
+      </section>
     </main>
   </div>
 
@@ -137,6 +173,8 @@
       sfApi.toast('Missing device ID', 'error');
       location.href = '/index.html';
     }
+
+    document.getElementById('securityPageLink').href = `/security.html?id=${encodeURIComponent(deviceId)}`;
 
     let currentDetails = null;
     let selectedProfileId = null;
@@ -152,16 +190,20 @@
         location.href = '/index.html';
         return;
       }
+
       try {
         devices = await sfApi.listDevices();
-      } catch { devices = []; }
+      } catch {
+        devices = [];
+      }
+
       await loadDevice();
     }
 
     function renderSidebarNow() {
       document.getElementById('sidebarMount').innerHTML = sfApi.renderSidebar({
         activePage: 'device',
-        devices: devices,
+        devices,
         currentDeviceId: deviceId,
         userEmail: currentUser ? currentUser.email : ''
       });
@@ -170,22 +212,27 @@
     function renderScheduleEditor() {
       const root = document.getElementById('scheduleEditor');
       if (!scheduleRows.length) {
-        root.innerHTML = '<div class="muted">No scheduled events</div>';
+        root.innerHTML = '<p class="muted">No scheduled events yet.</p>';
         return;
       }
+
       root.innerHTML = scheduleRows.map((row, idx) => `
-        <div class="row g-2 mb-2" data-row="${idx}">
-          <div class="col-4">
-            <input class="form-control" data-k="hh" type="number" min="0" max="23" value="${row.hh}" placeholder="HH">
+        <div class="schedule-row" data-row="${idx}">
+          <div>
+            <small>HH</small>
+            <input class="form-control" data-k="hh" type="number" min="0" max="23" value="${row.hh}">
           </div>
-          <div class="col-4">
-            <input class="form-control" data-k="mm" type="number" min="0" max="59" value="${row.mm}" placeholder="MM">
+          <div>
+            <small>MM</small>
+            <input class="form-control" data-k="mm" type="number" min="0" max="59" value="${row.mm}">
           </div>
-          <div class="col-3">
-            <input class="form-control" data-k="portionMs" type="number" min="1" value="${row.portionMs}" placeholder="ms">
+          <div>
+            <small>Portion ms</small>
+            <input class="form-control" data-k="portionMs" type="number" min="1" value="${row.portionMs}">
           </div>
-          <div class="col-1">
-            <button class="btn btn-outline-danger w-100" data-del="${idx}">&times;</button>
+          <div>
+            <small>Remove</small>
+            <button class="btn btn-outline-danger w-100 schedule-remove" data-del="${idx}">&times;</button>
           </div>
         </div>
       `).join('');
@@ -212,11 +259,11 @@
       const rows = document.getElementById('profileRows');
       const profiles = currentDetails.profiles || [];
 
-      select.innerHTML = profiles.map(p =>
-        `<option value="${p.name}" ${p.name === currentDetails.activeProfile ? 'selected' : ''}>${p.name}</option>`
-      ).join('');
+      select.innerHTML = profiles
+        .map((p) => `<option value="${p.name}" ${p.name === currentDetails.activeProfile ? 'selected' : ''}>${p.name}</option>`)
+        .join('');
 
-      rows.innerHTML = profiles.map(p => `
+      rows.innerHTML = profiles.map((p) => `
         <tr>
           <td>${p.name}</td>
           <td>${p.defaultPortionMs} ms</td>
@@ -261,22 +308,39 @@
         });
       });
 
-      const activeProfile = profiles.find(p => p.name === currentDetails.activeProfile) || profiles[0];
+      const activeProfile = profiles.find((p) => p.name === currentDetails.activeProfile) || profiles[0];
       selectedProfileId = activeProfile ? activeProfile.id : null;
+
       scheduleRows = (currentDetails.schedule || [])
-        .filter(s => activeProfile && s.profileName === activeProfile.name)
-        .map(s => ({ hh: s.hh, mm: s.mm, portionMs: s.portionMs }));
+        .filter((s) => activeProfile && s.profileName === activeProfile.name)
+        .map((s) => ({ hh: s.hh, mm: s.mm, portionMs: s.portionMs }));
+
       renderScheduleEditor();
     }
 
     async function loadDevice() {
       currentDetails = await sfApi.getDevice(deviceId);
+      renderSidebarNow();
+
       document.getElementById('deviceTitle').textContent = currentDetails.name;
       document.getElementById('breadcrumbName').textContent = currentDetails.name;
-      document.getElementById('deviceMeta').innerHTML =
-        `${sfApi.onlineBadge(currentDetails.lastSeenAt)} &nbsp; Last seen: ${sfApi.fmtTs(currentDetails.lastSeenAt)} &nbsp; Active profile: ${currentDetails.activeProfile || '—'}`;
       document.getElementById('statusJson').textContent = JSON.stringify(currentDetails.status || {}, null, 2);
-      renderSidebarNow();
+
+      document.getElementById('deviceMeta').innerHTML = `
+        ${sfApi.onlineBadge(currentDetails.lastSeenAt)}
+        <span class="meta-pill">Last seen: ${sfApi.fmtTs(currentDetails.lastSeenAt)}</span>
+        <span class="meta-pill">Relative: ${sfApi.relativeTime(currentDetails.lastSeenAt)}</span>
+        <span class="meta-pill">Active profile: ${currentDetails.activeProfile || '—'}</span>
+      `;
+
+      const lastStatus = currentDetails.status || {};
+      const rssiText = typeof lastStatus.rssi === 'number' ? `${lastStatus.rssi} dBm` : 'No data';
+
+      document.getElementById('deviceHealth').textContent = sfApi.isOnline(currentDetails.lastSeenAt) ? 'Online' : 'Offline';
+      document.getElementById('deviceHeartbeat').textContent = sfApi.relativeTime(currentDetails.lastSeenAt);
+      document.getElementById('deviceRssi').textContent = rssiText;
+      document.getElementById('deviceFw').textContent = currentDetails.firmwareVersion || lastStatus.fw || '-';
+
       renderProfiles();
       await loadLogs();
     }
@@ -284,12 +348,19 @@
     async function loadLogs() {
       const filterFd = new FormData(document.getElementById('logFilterForm'));
       const logs = await sfApi.listLogs(deviceId, filterFd.get('type'), filterFd.get('q'), logsPage, 50);
-      document.getElementById('logRows').innerHTML = logs.map(l => `
+      const body = document.getElementById('logRows');
+
+      if (!logs.length) {
+        body.innerHTML = '<tr><td colspan="4" class="muted">No logs found</td></tr>';
+        return;
+      }
+
+      body.innerHTML = logs.map((l) => `
         <tr>
           <td style="white-space:nowrap">${sfApi.fmtTs(l.ts)}</td>
-          <td><span class="badge bg-secondary">${l.type}</span></td>
+          <td>${l.type}</td>
           <td>${l.message}</td>
-          <td><code style="font-size:.78rem">${JSON.stringify(l.meta)}</code></td>
+          <td><code>${JSON.stringify(l.meta)}</code></td>
         </tr>
       `).join('');
     }
@@ -332,6 +403,7 @@
         sfApi.toast('No profile selected', 'warning');
         return;
       }
+
       const btn = document.getElementById('saveSchedule');
       sfApi.showLoading(btn, 'Saving...');
       try {
@@ -353,7 +425,7 @@
       sfApi.showLoading(btn, 'Sending...');
       try {
         await sfApi.feedNow(deviceId, portionVal ? Number(portionVal) : null);
-        sfApi.toast('FEED_NOW command queued', 'success');
+        sfApi.toast('FEED_NOW queued', 'success');
       } catch (err) {
         sfApi.toast(err.message, 'error');
       } finally {

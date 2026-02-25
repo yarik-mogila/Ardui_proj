@@ -1,6 +1,8 @@
 (function () {
-  async function api(path, options = {}) {
+  async function api(path, options) {
+    options = options || {};
     const headers = { ...(options.headers || {}) };
+
     if (options.body && !headers['Content-Type']) {
       headers['Content-Type'] = 'application/json';
     }
@@ -14,6 +16,7 @@
 
     const text = await response.text();
     let data = null;
+
     if (text) {
       try {
         data = JSON.parse(text);
@@ -31,8 +34,7 @@
   }
 
   function qp(name) {
-    const url = new URL(window.location.href);
-    return url.searchParams.get(name);
+    return new URL(window.location.href).searchParams.get(name);
   }
 
   function fmtTs(ts) {
@@ -40,12 +42,19 @@
     return new Date(ts).toLocaleString();
   }
 
-  function onlineBadge(lastSeenAt) {
-    if (!lastSeenAt) return '<span class="badge badge-offline rounded-pill">OFFLINE</span>';
-    const online = Date.now() - new Date(lastSeenAt).getTime() <= 120000;
-    return online
-      ? '<span class="badge badge-online rounded-pill">ONLINE</span>'
-      : '<span class="badge badge-offline rounded-pill">OFFLINE</span>';
+  function relativeTime(ts) {
+    if (!ts) return 'never seen';
+    const diff = Date.now() - new Date(ts).getTime();
+    if (diff < 0) return 'just now';
+
+    const sec = Math.floor(diff / 1000);
+    if (sec < 60) return `${sec}s ago`;
+    const min = Math.floor(sec / 60);
+    if (min < 60) return `${min}m ago`;
+    const hour = Math.floor(min / 60);
+    if (hour < 24) return `${hour}h ago`;
+    const day = Math.floor(hour / 24);
+    return `${day}d ago`;
   }
 
   function isOnline(lastSeenAt) {
@@ -53,70 +62,96 @@
     return Date.now() - new Date(lastSeenAt).getTime() <= 120000;
   }
 
-  /* ── Signal bars helper ── */
+  function onlineBadge(lastSeenAt) {
+    const online = isOnline(lastSeenAt);
+    return online
+      ? '<span class="status-badge status-online">ONLINE</span>'
+      : '<span class="status-badge status-offline">OFFLINE</span>';
+  }
+
   function signalBars(rssi) {
-    if (rssi == null) return '<span class="muted">—</span>';
+    if (rssi == null) return '<span class="muted">No signal data</span>';
+
     let level = 0;
     if (rssi > -50) level = 4;
     else if (rssi > -60) level = 3;
     else if (rssi > -70) level = 2;
     else if (rssi > -80) level = 1;
-    const bars = [4, 8, 12, 16].map((h, i) =>
-      `<div class="bar${i < level ? ' active' : ''}" style="height:${h}px"></div>`
-    ).join('');
-    return `<span class="signal-bars">${bars}</span> <small class="muted">${rssi}dBm</small>`;
+
+    const bars = [4, 8, 12, 16]
+      .map((height, i) => `<span class="bar${i < level ? ' active' : ''}" style="height:${height}px"></span>`)
+      .join('');
+
+    return `<span class="signal-bars" title="${rssi} dBm">${bars}</span> <small class="muted">${rssi} dBm</small>`;
   }
 
-  /* ── Toast notification system ── */
   function ensureToastContainer() {
-    let c = document.getElementById('toastContainer');
-    if (!c) {
-      c = document.createElement('div');
-      c.id = 'toastContainer';
-      c.className = 'toast-container';
-      document.body.appendChild(c);
+    let node = document.getElementById('toastContainer');
+    if (!node) {
+      node = document.createElement('div');
+      node.id = 'toastContainer';
+      node.className = 'toast-container';
+      document.body.appendChild(node);
     }
-    return c;
+    return node;
   }
 
   function toast(message, type) {
     type = type || 'info';
-    const container = ensureToastContainer();
     const icons = {
-      success: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
-      error: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
-      warning: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
-      info: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+      success: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>',
+      error: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>',
+      warning: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="m3 20 9-16 9 16Z"/></svg>',
+      info: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
     };
+
     const el = document.createElement('div');
     el.className = `toast-item toast-${type}`;
     el.innerHTML = `${icons[type] || icons.info}<span>${message}</span>`;
-    container.appendChild(el);
+    ensureToastContainer().appendChild(el);
+
     setTimeout(() => {
-      el.classList.add('removing');
+      el.classList.add('toast-hide');
       el.addEventListener('animationend', () => el.remove());
-    }, 3500);
+    }, 3400);
   }
 
-  /* ── Button loading states ── */
   function showLoading(btn, text) {
+    if (!btn) return;
     btn.disabled = true;
-    btn._origHTML = btn.innerHTML;
+    btn._original = btn.innerHTML;
     btn.innerHTML = `<span class="spinner"></span>${text || 'Loading...'}`;
   }
 
   function hideLoading(btn) {
+    if (!btn) return;
     btn.disabled = false;
-    if (btn._origHTML) btn.innerHTML = btn._origHTML;
+    if (btn._original) {
+      btn.innerHTML = btn._original;
+    }
   }
 
-  /* ── Sidebar renderer ── */
+  function toggleSidebar(forceOpen) {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (!sidebar || !overlay) return;
+
+    const willOpen = typeof forceOpen === 'boolean' ? forceOpen : !sidebar.classList.contains('open');
+    sidebar.classList.toggle('open', willOpen);
+    overlay.classList.toggle('open', willOpen);
+    document.body.classList.toggle('sidebar-open', willOpen);
+  }
+
+  function closeSidebar() {
+    toggleSidebar(false);
+  }
+
   const ICONS = {
-    dashboard: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
-    device: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M8 6h8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M10 16h4"/></svg>',
-    shield: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
-    logout: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
-    paw: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="4" cy="8" r="2"/><path d="M12 18c-4 0-6-2.5-6-5 0-1.8 1.3-3 3-3h6c1.7 0 3 1.2 3 3 0 2.5-2 5-6 5z"/></svg>'
+    dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>',
+    device: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M9 7h6"/><path d="M12 17h.01"/></svg>',
+    security: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 7v5c0 5.2 3.4 8.8 8 10 4.6-1.2 8-4.8 8-10V7z"/><path d="m9.5 12.5 2 2 4-4"/></svg>',
+    logout: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17v-2a4 4 0 0 1 4-4h7"/><path d="M21 11 17 7"/><path d="m21 11-4 4"/><path d="M14 21H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h8"/></svg>',
+    paw: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="4" cy="8" r="2"/><path d="M12 19c-4 0-6-2.5-6-5 0-1.8 1.3-3 3-3h6c1.7 0 3 1.2 3 3 0 2.5-2 5-6 5z"/></svg>'
   };
 
   function renderSidebar(opts) {
@@ -124,39 +159,60 @@
     const activePage = opts.activePage || 'dashboard';
     const devices = opts.devices || [];
     const currentDeviceId = opts.currentDeviceId || null;
-    const userEmail = opts.userEmail || '';
+    const userEmail = opts.userEmail || 'guest@local';
 
-    let deviceLinks = '';
-    devices.forEach(function(d) {
-      const isActive = activePage === 'device' && currentDeviceId === d.deviceId;
-      deviceLinks += `
-        <a href="/device.html?id=${encodeURIComponent(d.deviceId)}" class="${isActive ? 'active' : ''}">
-          ${ICONS.device}
-          <span>${d.name}</span>
-        </a>`;
-    });
+    const deviceItems = devices
+      .map((d) => {
+        const active = activePage === 'device' && currentDeviceId === d.deviceId;
+        const stateClass = isOnline(d.lastSeenAt) ? 'dot-online' : 'dot-offline';
+        return `
+          <a href="/device.html?id=${encodeURIComponent(d.deviceId)}" class="${active ? 'active' : ''}" onclick="sfApi.closeSidebar()">
+            <span class="sidebar-icon">${ICONS.device}</span>
+            <span class="sidebar-line">
+              <span>${d.name}</span>
+              <small>${d.deviceId}</small>
+            </span>
+            <span class="sidebar-dot ${stateClass}"></span>
+          </a>`;
+      })
+      .join('');
 
-    const securityActive = activePage === 'security';
+    const securityLink = currentDeviceId
+      ? `<a href="/security.html?id=${encodeURIComponent(currentDeviceId)}" class="${activePage === 'security' ? 'active' : ''}" onclick="sfApi.closeSidebar()"><span class="sidebar-icon">${ICONS.security}</span><span class="sidebar-line"><span>Security</span><small>Secret and auth mode</small></span></a>`
+      : '';
 
     return `
-      <div class="topbar">
-        <button class="topbar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('open')">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <header class="topbar">
+        <button class="topbar-toggle" onclick="sfApi.toggleSidebar()" aria-label="Toggle menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg>
         </button>
-        <span class="topbar-title">Smart Feeder</span>
-      </div>
-      <div class="sidebar-overlay" onclick="this.classList.remove('open');document.querySelector('.sidebar').classList.remove('open')"></div>
+        <div class="topbar-title-wrap">
+          <strong class="topbar-title">Smart Feeder Cloud</strong>
+          <small>Control Layer</small>
+        </div>
+      </header>
+      <div class="sidebar-overlay" onclick="sfApi.closeSidebar()"></div>
       <aside class="sidebar">
-        <a class="sidebar-brand" href="/index.html">${ICONS.paw} Smart Feeder</a>
+        <a class="sidebar-brand" href="/index.html">
+          <span class="brand-mark">${ICONS.paw}</span>
+          <span class="brand-copy">
+            <strong>Smart Feeder</strong>
+            <small>Fleet Console 2026</small>
+          </span>
+        </a>
+        <div class="sidebar-user">${userEmail}</div>
         <nav class="sidebar-nav">
-          <a href="/index.html" class="${activePage === 'dashboard' ? 'active' : ''}">${ICONS.dashboard} Dashboard</a>
-          ${deviceLinks ? '<div class="sidebar-divider"></div>' + deviceLinks : ''}
-          ${currentDeviceId ? '<div class="sidebar-divider"></div><a href="/security.html?id=' + encodeURIComponent(currentDeviceId) + '" class="' + (securityActive ? 'active' : '') + '">' + ICONS.shield + ' Security</a>' : ''}
+          <a href="/index.html" class="${activePage === 'dashboard' ? 'active' : ''}" onclick="sfApi.closeSidebar()">
+            <span class="sidebar-icon">${ICONS.dashboard}</span>
+            <span class="sidebar-line"><span>Dashboard</span><small>Overview</small></span>
+          </a>
+          ${deviceItems ? '<div class="sidebar-section">Devices</div>' + deviceItems : ''}
+          ${securityLink}
         </nav>
         <div class="sidebar-footer">
-          <div class="sidebar-user">${userEmail}</div>
-          <button onclick="sfApi.logout().finally(function(){ location.href='/index.html'; })">
-            ${ICONS.logout} Logout
+          <button class="sidebar-logout" onclick="sfApi.logout().finally(function(){location.href='/index.html';})">
+            <span class="sidebar-icon">${ICONS.logout}</span>
+            <span class="sidebar-line"><span>Logout</span><small>End session</small></span>
           </button>
         </div>
       </aside>`;
@@ -166,6 +222,7 @@
     api,
     qp,
     fmtTs,
+    relativeTime,
     onlineBadge,
     isOnline,
     signalBars,
@@ -173,6 +230,8 @@
     showLoading,
     hideLoading,
     renderSidebar,
+    toggleSidebar,
+    closeSidebar,
     ICONS,
 
     register: (email, password) => api('/api/auth/register', { method: 'POST', body: { email, password } }),
@@ -215,13 +274,11 @@
     }),
 
     listLogs: (deviceId, type, q, page, size) => {
-      page = page || 0;
-      size = size || 50;
       const params = new URLSearchParams();
       if (type) params.set('type', type);
       if (q) params.set('q', q);
-      params.set('page', page);
-      params.set('size', size);
+      params.set('page', page || 0);
+      params.set('size', size || 50);
       return api(`/api/admin/devices/${encodeURIComponent(deviceId)}/logs?${params.toString()}`);
     },
 
