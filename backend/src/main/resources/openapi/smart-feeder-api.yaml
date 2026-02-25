@@ -1,0 +1,273 @@
+openapi: 3.0.3
+info:
+  title: Smart Feeder Cloud API
+  version: 1.0.0
+servers:
+  - url: /
+paths:
+  /api/device/poll:
+    post:
+      summary: Device heartbeat poll
+      parameters:
+        - in: header
+          name: X-Device-Id
+          required: false
+          schema: { type: string }
+        - in: header
+          name: X-Nonce
+          required: false
+          schema: { type: string }
+        - in: header
+          name: X-Sign
+          required: false
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PollRequest'
+      responses:
+        '200':
+          description: Poll response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollResponse'
+  /api/auth/register:
+    post:
+      summary: Register user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, minLength: 8 }
+      responses:
+        '200':
+          description: Registered
+  /api/auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        '200': { description: Logged in }
+  /api/auth/logout:
+    post:
+      summary: Logout user
+      responses:
+        '204': { description: Logged out }
+  /api/auth/me:
+    get:
+      summary: Current user
+      responses:
+        '200': { description: Current user }
+  /api/admin/devices:
+    get:
+      summary: List devices
+      responses:
+        '200': { description: Devices }
+    post:
+      summary: Create device
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deviceId, name]
+              properties:
+                deviceId: { type: string }
+                name: { type: string }
+      responses:
+        '200': { description: Created }
+  /api/admin/devices/{deviceId}:
+    get:
+      summary: Device details
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Device details }
+  /api/admin/devices/{deviceId}/rotate-secret:
+    post:
+      summary: Rotate device secret
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: New one-time secret }
+  /api/admin/devices/{deviceId}/profiles:
+    post:
+      summary: Create profile
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, defaultPortionMs]
+              properties:
+                name: { type: string }
+                defaultPortionMs: { type: integer }
+      responses:
+        '200': { description: Created }
+  /api/admin/profiles/{profileId}:
+    patch:
+      summary: Update profile
+      parameters:
+        - in: path
+          name: profileId
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Updated }
+    delete:
+      summary: Delete profile
+      parameters:
+        - in: path
+          name: profileId
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Deleted }
+  /api/admin/profiles/{profileId}/schedule:
+    put:
+      summary: Replace schedule
+      parameters:
+        - in: path
+          name: profileId
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Updated }
+  /api/admin/devices/{deviceId}/active-profile:
+    post:
+      summary: Set active profile
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Updated }
+  /api/admin/devices/{deviceId}/feed-now:
+    post:
+      summary: Queue manual feed command
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Command queued }
+  /api/admin/devices/{deviceId}/logs:
+    get:
+      summary: List feed logs
+      parameters:
+        - in: path
+          name: deviceId
+          required: true
+          schema: { type: string }
+        - in: query
+          name: type
+          schema: { type: string }
+        - in: query
+          name: q
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 0 }
+        - in: query
+          name: size
+          schema: { type: integer, minimum: 1, maximum: 200 }
+      responses:
+        '200': { description: Logs list }
+  /api/admin/security/config:
+    get:
+      summary: Current device auth flags
+      responses:
+        '200': { description: Security config }
+components:
+  schemas:
+    PollRequest:
+      type: object
+      required: [deviceId, ts]
+      properties:
+        deviceId: { type: string }
+        ts: { type: integer }
+        status:
+          type: object
+          properties:
+            fw: { type: string }
+            uptimeSec: { type: integer }
+            rssi: { type: integer }
+            error: { type: string, nullable: true }
+            lastFeedTs: { type: integer, nullable: true }
+        log:
+          type: array
+          items:
+            type: object
+            properties:
+              ts: { type: integer }
+              type: { type: string }
+              msg: { type: string }
+              meta: { type: object, additionalProperties: true }
+        ack:
+          type: array
+          items: { type: string }
+    PollResponse:
+      type: object
+      properties:
+        serverTime: { type: integer }
+        intervalSec: { type: integer }
+        commands:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              commandType: { type: string }
+              payloadJson: { type: object, additionalProperties: true }
+        config:
+          type: object
+          properties:
+            activeProfile: { type: string, nullable: true }
+            profiles:
+              type: array
+              items:
+                type: object
+                properties:
+                  name: { type: string }
+                  defaultPortionMs: { type: integer }
+            schedule:
+              type: array
+              items:
+                type: object
+                properties:
+                  profileName: { type: string }
+                  hh: { type: integer }
+                  mm: { type: integer }
+                  portionMs: { type: integer }

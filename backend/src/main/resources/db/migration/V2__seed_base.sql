@@ -1,0 +1,1 @@
+-- Seed is handled by application bootstrap to generate one-time secrets safely.

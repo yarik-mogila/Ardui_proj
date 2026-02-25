@@ -1,0 +1,11 @@
+{
+  "name": "smart-feeder-cloud",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "up": "docker compose --env-file .env up --build",
+    "down": "docker compose down -v",
+    "logs": "docker compose logs -f --tail=200",
+    "sim": "npm --prefix simulator run start"
+  }
+}

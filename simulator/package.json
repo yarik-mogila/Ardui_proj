@@ -1,0 +1,9 @@
+{
+  "name": "smart-feeder-simulator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/device-sim.js"
+  }
+}

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Feeder Security</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="nav-line">
+      <a class="pill-link" href="/index.html">← Dashboard</a>
+      <a id="deviceLink" class="pill-link" href="#">Device page</a>
+    </div>
+
+    <section class="hero mb-3">
+      <h1 id="title">Security</h1>
+      <p id="meta" class="muted mb-0"></p>
+    </section>
+
+    <section class="panel mb-3">
+      <h3>Device auth mode</h3>
+      <div id="signState"></div>
+      <small class="muted">Подпись и replay-проверка переключаются глобальным флагом сервера.</small>
+    </section>
+
+    <section class="panel mb-3">
+      <h3>Warnings</h3>
+      <div id="warnBox"></div>
+    </section>
+
+    <section class="panel">
+      <h3>Rotate secret</h3>
+      <p class="muted">После ротации старый секрет перестанет работать.</p>
+      <button id="rotateBtn" class="btn btn-outline-danger">Rotate secret</button>
+      <div id="rotateResult" class="mt-3"></div>
+    </section>
+  </div>
+
+  <script src="/assets/app.js"></script>
+  <script>
+    const deviceId = sfApi.qp('id');
+    if (!deviceId) {
+      alert('missing ?id=...');
+      location.href = '/index.html';
+    }
+    document.getElementById('deviceLink').href = `/device.html?id=${encodeURIComponent(deviceId)}`;
+
+    async function load() {
+      const [details, sec] = await Promise.all([
+        sfApi.getDevice(deviceId),
+        sfApi.securityConfig()
+      ]);
+
+      document.getElementById('title').textContent = `Security: ${details.name} (${details.deviceId})`;
+      document.getElementById('meta').innerHTML = `${sfApi.onlineBadge(details.lastSeenAt)} | lastSeen: ${sfApi.fmtTs(details.lastSeenAt)}`;
+
+      document.getElementById('signState').innerHTML = sec.signatureEnabled
+        ? '<div class="alert alert-success">Signature: ENABLED. HMAC + nonce replay protection are active.</div>'
+        : '<div class="alert alert-warning">Signature: DISABLED. HMAC and nonce checks are bypassed by server flag.</div>';
+
+      const offline = !details.lastSeenAt || (Date.now() - new Date(details.lastSeenAt).getTime() > 120000);
+      document.getElementById('warnBox').innerHTML = offline
+        ? '<div class="warn-box">Устройство давно не в сети (более 2 минут).</div>'
+        : '<div class="alert alert-success">Устройство в сети.</div>';
+    }
+
+    document.getElementById('rotateBtn').addEventListener('click', async () => {
+      if (!confirm('Rotate secret now?')) return;
+      try {
+        const res = await sfApi.rotateSecret(deviceId);
+        document.getElementById('rotateResult').innerHTML = `<div class="alert alert-warning">Новый secret: <code>${res.secret}</code></div>`;
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    sfApi.me().then(load).catch(() => location.href = '/index.html');
+  </script>
+</body>
+</html>

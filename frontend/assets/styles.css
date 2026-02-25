@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;600;700&display=swap');
+
+:root {
+  --bg-grad-a: #f3f7f0;
+  --bg-grad-b: #d7e8dc;
+  --panel: #ffffffcc;
+  --ink: #1f2c26;
+  --ink-muted: #4f635a;
+  --brand: #115e45;
+  --brand-soft: #1f8b68;
+  --warn: #b45309;
+  --danger: #b91c1c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: 'Manrope', sans-serif;
+  background:
+    radial-gradient(circle at 15% 15%, #ffffffcc 0, transparent 40%),
+    radial-gradient(circle at 80% 0%, #d4f6e8aa 0, transparent 45%),
+    linear-gradient(130deg, var(--bg-grad-a), var(--bg-grad-b));
+  min-height: 100vh;
+}
+
+.app-shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.hero {
+  padding: 24px;
+  background: var(--panel);
+  border: 1px solid #d6e4dc;
+  border-radius: 18px;
+  box-shadow: 0 12px 35px #5d7c6f1f;
+  backdrop-filter: blur(6px);
+}
+
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.hero p {
+  color: var(--ink-muted);
+  margin-top: 10px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid #d6e4dc;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px #5d7c6f17;
+  padding: 20px;
+}
+
+.panel h2,
+.panel h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  margin-top: 0;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.badge-online {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge-offline {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-brand {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+.btn-brand:hover {
+  background: var(--brand-soft);
+  border-color: var(--brand-soft);
+  color: #fff;
+}
+
+.table thead th {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+}
+
+pre.json-view {
+  margin: 0;
+  white-space: pre-wrap;
+  background: #0f172a;
+  color: #cde5ff;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 13px;
+  max-height: 280px;
+  overflow: auto;
+}
+
+.nav-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 0;
+}
+
+.pill-link {
+  text-decoration: none;
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.warn-box {
+  border: 1px solid #f59e0b;
+  background: #fffbeb;
+  color: #92400e;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+@media (max-width: 900px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
